@@ -314,10 +314,10 @@ function HomeView({ clients, assessments, catalog, onStart, onDashboard }) {
               )}
             </div>
             <div style={{display:"flex",borderTop:`1px solid ${T.border}`}}>
-              <button onClick={() => onStart(s.client)} style={{flex:1,padding:"10px 0",background:"transparent",border:"none",cursor:"pointer",fontFamily:FONT,fontSize:13,fontWeight:600,color:T.accent,borderRight:`1px solid ${T.border}`}}>
+              <button onClick={() => onStart(s.client)} style={{flex:1,padding:"10px 0",background:T.ok,border:"none",cursor:"pointer",fontFamily:FONT,fontSize:13,fontWeight:600,color:"#fff",borderRight:`1px solid ${T.border}`,borderBottomLeftRadius:12}}>
                 {s.pct ? "New Assessment" : "Start Assessment"}
               </button>
-              {s.pct && <button onClick={() => onDashboard(s.client)} style={{flex:1,padding:"10px 0",background:"transparent",border:"none",cursor:"pointer",fontFamily:FONT,fontSize:13,fontWeight:600,color:T.muted}}>Dashboard</button>}
+              {s.pct && <button onClick={() => onDashboard(s.client)} style={{flex:1,padding:"10px 0",background:"transparent",border:"none",cursor:"pointer",fontFamily:FONT,fontSize:13,fontWeight:600,color:T.muted,borderBottomRightRadius:12}}>Dashboard</button>}
             </div>
           </div>
         ))}
@@ -375,7 +375,7 @@ function AssessView({ clients, catalog, assessments, activeClient, setActiveClie
   };
 
   return (
-    <div style={{display:"grid",gridTemplateColumns:"260px 440px 1fr",gap:0,height:"calc(100vh - 112px)",background:T.card,borderRadius:12,border:`1px solid ${T.border}`,overflow:"hidden"}}>
+    <div style={{display:"grid",gridTemplateColumns:"220px minmax(0,380px) 1fr",gap:0,height:"calc(100vh - 112px)",background:T.card,borderRadius:12,border:`1px solid ${T.border}`,overflow:"hidden",minWidth:0}}>
 
       {/* LEFT SIDEBAR */}
       <div style={{borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",background:T.bg}}>
@@ -495,7 +495,7 @@ function AssessView({ clients, catalog, assessments, activeClient, setActiveClie
             <p style={{fontFamily:FONT,fontSize:13,color:T.muted,lineHeight:1.55,marginBottom:24}}>{activeQ.standard}</p>
 
             {/* Status buttons */}
-            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:24}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(90px,1fr))",gap:10,marginBottom:24}}>
               {STATUSES.map(s => {
                 const k = STATUS_KEY[s];
                 const active = activeR.status === s;
@@ -912,4 +912,3 @@ function ClientsView({ clients, assessments, catalog, onSave, onStart, onDashboa
     </div>
   );
 }
-
