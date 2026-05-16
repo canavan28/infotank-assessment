@@ -26,6 +26,7 @@ const T = {
 };
 const FONT = "'Geist','Geist Sans',system-ui,-apple-system,'Segoe UI',sans-serif";
 const MONO = "'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace";
+const LOGO_URI = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABBALQDASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwMEAgEI/8QASRAAAQMDAgMEAwoJCwUAAAAAAQIDBAAFEQYSByExE0FRYRQigRYXMkJxkZOhsdIIFTM2N1RzdNEjJDRSVVZicnWEspSzwuHw/8QAGQEBAAMBAQAAAAAAAAAAAAAAAAECBQQD/8QAKREAAgIBAgQFBQEAAAAAAAAAAAECEQMEIQUSEzEiMlJxgUFykcHRsf/aAAwDAQACEQMRAD8A/jKlKUArvAZTInx46iQl11KCR1AJArhX0hSkLStCilSTlKgcEHxoDSOIPD22ac04u5xZsx5xLqEbXNu3BPkKq+g4+mpFxfTqeSpiMGctKSVDK8jlyB7s1309rGexKXHvsqXdbXJT2UpiQ6pw7T8ZO48lDr/8CLJJ4RXFb61wbpDMVRy12oUF7T0zgYzV8U+nNSaTr6PsVyQ6kXFOvYootj9xvMuLYor81tC1qbDSSpXZBWArx7x89cLpbLha3ks3GE/EcWnclLqCkkdM8606w2N3hlJd1Den0S4zrXooREBKwpSkqB9baMYQe/wqp8UNTQNUXeLMt7MlptqP2ag+lIJO4nlgnlzrqeLA9O8nN477HN1MyzrHy+Gu5UaUpXEdYpSlAKUpQClKUApSlAKUpQClKUApSlAKUpQClKltPadu9+dUm3RFLbR+UeUdrbY/xKPIfJ1oCJr+roX9DY/Zp+ysECNIaZOXlDUtzR1Qg7YjavM9XPsPlXw/xK1it1S27k2wgn1W24ze1I8BlJPzmoJWxo3Hb8yUfvjf/FVYTWjN6g109p03y8RIl3sC+TiZDbISfX2ZAThQO7kDjzqL/Fek9RHNknKss5XSFOVllR8EO/x5mryxyhXMqvf4KqcZ3yu62KbSpK+2O62OT2F0hOx1H4KiMoX/AJVDkfZUbVSRSlKAUpSgFKUoBSlKAUpSgFKUoBSlKAVOw9KXx2TDTJt0qJHlPtNCQ4ydie0UEg/XUFW88RXnY/C5qQw4pt1pMVaFpOClQUkgjzzXfpNJHPjyzb8qv/Ti1WqlhyY4peZ0U296Tseh47M29l69SHlkR46B2TWU4yVnJJHMdKquodVXa8tJiuLbiwEcm4cVPZspHyDr7amLRYdZ65ipkOTVvRWlENuzXzt3d+3kT4d1e73odS/r1p+lc+5WedxnldI7D0l5LMdlx51RwlDaSpR+QCrHqvQ9+03GEqa2y9GyEl6OsqSknpnIBHy4xV9/B+iRxabjO7NJkKkBreRzCQkHA9p+ypFFAnytZQNLfiWdGnxbPu27HoWxOd+/G8pzndz6/VVarUOKkfWqLCXr9OtbkBUlO1mKDlKsKxzKQcYz31VNKaJvupGDJgtNNxgrb2z69qSe8DAJPzVaWSU65ndbfBSMIxvlVWc7Hq67W2L6C4pq4W88lRJie0bx5Z5p9lW/T+itP60tpu1qVLs215TT0ckPICgEq9Ukg49Yda8XvQ6l/XrT9K59yuN007rrRlqceYuC0QQve6YUhW1JOBuIIB7gM4qhcrS9NXxTrnolnuUphLikIdbirUlYBIyCBjur89zGpf7vXb/onP4VN2biRqK1W1qBHENbbWcKcbKlHJJJJ3eJNarYtQz5vDJzUbwZ9NTEkPAJSQjc2VhPLPT1R31s6TRaXU7KbtK3t+TJ1Wr1On3cVTdLcwx3TmoWmlOu2G6IbQkqUpURwBIHUk45CoutJtGudXaqmjT7P4qbXObcb3ONqSANiieYJ7ge6uPvQ6l/XrT9K59ys/URwRa6Mm/dUd2B5pJ9VJexnlK0JfCPUyUFQl2pZHxQ8vJ+dFUq8Wqfabku3T4ymZKCAUdc56EEdQfKuc9zxUq+W/hVqiVFQ+tUCIVAHs33Vbx8oSk4rueEWpQCRNtJ8g659yhNGeV7ZVpusWIiZKtk1iMvGx5xhSUKyMjCiMHIrpqGy3Gw3EwLmx2TwG5ODlKk9xB7xyrVOJ/6JbR/tv8AtGgMapUzpXTV11LNMa2tJwgZcecJDbfhkgHr4DnXzqmwu6eniDJnQZMgDLiYy1K7PwCspHPyoQRFKUoBW7cTf0Tj9nG+1NYTW3cSJsN3hYGWpbC3Ozj+olwFXIpzyrZ4Y0sGov0/0yeIpvNh+7+C1TpNr4GtzYLnYyG46tiwB6pLpBPy8zWW+6/VH9v3H6dVaH6XF94f0f0lntvR8dn2g3flvDrWQVjGuzblz5V34GvTbg52z64y96yPhFDpAJ8/VFfH4P8A+bU/98/8E147VLijgOuOZLIe9HeHZlwbvyyu7rXXgPMiR9OzkyJTDKjLyAtwJJGxPjUEmRvzZkhHZvy33UZztW4VDPtrY4El+DwHTIhuqYdTGVtWg4KdzxBII6HmedYpWyaHn2O/8NvcxKuTUOSltTa0rWEq+GVJUnPwh0z7akhGRmdNLnaGZIK/63aHPz1sdilSJnA6Y7LfcfcEWQne4rccAqAGT4VXjwvi5ONX28juygffqw3t+x6U4ZSLAi8MzZDjLjbYQoblqWTz2gnAGe891QEYpW4aT/QS9/p83/k7WH1tOlpkRHBF6OuUwl70CYOzLgCslTuBjrWzwZpZcl+l/oyuLJvHCvUv2ZRpi1yb1folshuhp59ZAWT8EAEqPLwANaRc9IaMsa0Rr3qy5NSlJ3bUuAcvHaEqI7+pqi8O7nFs+s7dcJqiiO2pSVqAztCkKTn5BuzWka30naNV3RN4iaohMlbaUFJUlxKsdCCFDFYxqo/NHx9ExL/FNn1bdX5SlkIYW76juR0UOzGfn7q8PEtKVcYNNpUkEK9FyCOv84VXXSmg7bZL7Gu0nVUJ5MVW8Np2pycHqSrkPZURrC+W678W7LIhSEORor8ZlTwPqKIeKiQfAbsZ8qEk3xu1BeLVMt0W2z3ojbjanFlo7VKOcDJ648vOqXpjV+pjqO3IcvUx1tcltC0OOFSVJKgCCD5Gpzj1JjyLvbVR32ngI6gShYVj1vKqLptSUaitilKCUiW0SScADeKEPuaH+EIkenWhWBuLToJxz6p/jVtu9iTqPQ1iti5aYyFCOtSz8IgNHkkd5P8A77qp3HyTGky7QY8hp4Jbdz2awrHNPhUlxEnsjhhZ/RZrfpLSoyh2bo3oIbPPkcjBoSfXEC+p0Ra2dN6cgriFxvcZRTyweRKT8Zfie7l7MecWtxanHFKWtRJUpRyST3mtY0vqu06wtXuc1eG0ySP5GSSEhZA5HPxV/UfqNC1lp1zT9xLKZLMyKsksvtLByPBQHRXl81CGQVKUqSBSlKAUpSgFKUoBSlKAUpSgFKUoBSlKAUpSgFKUoBSlKAUpSgFKUoD/2Q==";
 
 // ─── QUESTION CATALOG ────────────────────────────────────────────────────────
 const DEFAULT_CATALOG = [
@@ -222,8 +223,7 @@ export default function App() {
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 24px",height:56,maxWidth:1400,margin:"0 auto"}}>
           <div style={{display:"flex",alignItems:"center",gap:16}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
-              <div style={{width:28,height:28,borderRadius:6,background:"linear-gradient(135deg,#2E7A8C,#4FB3C7)",display:"grid",placeItems:"center",color:T.navy,fontFamily:MONO,fontWeight:700,fontSize:13}}>iT</div>
-              <span style={{fontFamily:FONT,fontWeight:600,fontSize:14,letterSpacing:0.1}}>InfoTank</span>
+              <img src={LOGO_URI} alt="InfoTank" style={{height:32,width:"auto",objectFit:"contain"}} />
             </div>
             <div style={{width:1,height:22,background:T.navyEdge,margin:"0 6px"}}/>
             <div style={{display:"flex",gap:2}}>
@@ -586,11 +586,8 @@ function DashboardView({ clients, assessments, catalog, activeClient, setActiveC
           <div style={{background:T.navy,color:"#E8EDF5",padding:"20px 40px 22px",borderBottom:`1px solid ${T.navyEdge}`}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
               <div style={{display:"flex",alignItems:"center",gap:14}}>
-                <div style={{width:36,height:36,borderRadius:8,background:"linear-gradient(135deg,#2E7A8C,#4FB3C7)",display:"grid",placeItems:"center",color:T.navy,fontFamily:MONO,fontWeight:700,fontSize:16}}>iT</div>
-                <div>
-                  <div style={{fontFamily:FONT,fontWeight:600,fontSize:15}}>InfoTank</div>
-                  <div style={{fontFamily:MONO,fontSize:11,color:"#94A3B8",letterSpacing:0.4}}>MANAGED SERVICES · TBR SCORECARD</div>
-                </div>
+                <img src={LOGO_URI} alt="InfoTank" style={{height:36,width:"auto",objectFit:"contain"}} />
+                <div style={{fontFamily:MONO,fontSize:11,color:"#94A3B8",letterSpacing:0.4}}>MANAGED SERVICES · TBR SCORECARD</div>
               </div>
               <div style={{fontFamily:MONO,fontSize:11,color:"#94A3B8",letterSpacing:0.4}}>REVIEW PERIOD · {reviewPeriod}</div>
             </div>
@@ -915,3 +912,4 @@ function ClientsView({ clients, assessments, catalog, onSave, onStart, onDashboa
     </div>
   );
 }
+
