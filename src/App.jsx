@@ -578,7 +578,7 @@ function AssessView({clients,catalog,assessments,activeClient,setActiveClient,is
   return(
     <div style={{display:"grid",gridTemplateColumns:"220px minmax(0,380px) 1fr",gap:0,height:"calc(100vh - 112px)",background:T.card,borderRadius:12,border:`1px solid ${T.border}`,overflow:"hidden",minWidth:0}}>
       {/* Left sidebar */}
-      <div style={{borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",background:T.bg}}>
+      <div style={{borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",background:T.bg,height:"calc(100vh - 112px)",overflow:"hidden"}}>
         <div style={{padding:"16px 16px 12px",borderBottom:`1px solid ${T.border}`}}>
           <Eyebrow>Client</Eyebrow>
           <select value={client} onChange={e=>{setClient(e.target.value);setActiveClient(e.target.value);}} style={{width:"100%",fontFamily:FONT,fontWeight:600,fontSize:14,color:T.ink,background:"transparent",border:"none",cursor:"pointer",padding:"2px 0",outline:"none"}}>
@@ -612,7 +612,7 @@ function AssessView({clients,catalog,assessments,activeClient,setActiveClient,is
       </div>
 
       {/* Middle: question list */}
-      <div style={{borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column"}}>
+      <div style={{borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",height:"calc(100vh - 112px)",overflow:"hidden"}}>
         <div style={{padding:"14px 16px 10px",borderBottom:`1px solid ${T.border}`}}>
           <div style={{display:"flex",alignItems:"center",gap:8,background:T.bg,borderRadius:7,padding:"7px 10px",border:`1px solid ${T.border}`}}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.muted} strokeWidth="2"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2"/></svg>
@@ -638,7 +638,7 @@ function AssessView({clients,catalog,assessments,activeClient,setActiveClient,is
       </div>
 
       {/* Right detail */}
-      <div style={{overflowY:"auto",padding:"28px 32px 60px"}}>
+      <div style={{overflowY:"auto",padding:"28px 32px 60px",height:"calc(100vh - 112px)",boxSizing:"border-box"}}>
         {!activeQ?<div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",color:T.muted,fontFamily:FONT}}>Select a question</div>:(
           <>
             <div style={{display:"flex",gap:8,marginBottom:12,alignItems:"center"}}>
