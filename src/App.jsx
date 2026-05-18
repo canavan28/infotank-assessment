@@ -6,9 +6,10 @@ const msalConfig = {
   auth: {
     clientId: "0a54654f-ae37-45ed-92f7-e18666ad80f9",
     authority: "https://login.microsoftonline.com/701012de-b85f-4128-a794-fa585f8fdf2d",
-    redirectUri: window.location.origin,
+    redirectUri: "https://infotank-assessment.vercel.app",
+    postLogoutRedirectUri: "https://infotank-assessment.vercel.app",
   },
-  cache: { cacheLocation: "sessionStorage", storeAuthStateInCookie: false },
+  cache: { cacheLocation: "localStorage", storeAuthStateInCookie: true },
 };
 const msalInstance = new PublicClientApplication(msalConfig);
 await msalInstance.initialize();
@@ -25,8 +26,7 @@ async function getToken() {
     return resp.idToken;
   } catch (err) {
     if (err instanceof InteractionRequiredAuthError) {
-      const resp = await msalInstance.acquireTokenPopup({ ...loginRequest, account: accounts[0] });
-      return resp.idToken;
+      await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
     }
     throw err;
   }
@@ -290,9 +290,8 @@ function LoginScreen({onLogin,error}){
   const [loading,setLoading]=useState(false);
   const handleLogin=async()=>{
     setLoading(true);
-    try{await msalInstance.loginPopup(loginRequest);onLogin();}
-    catch(e){console.error(e);}
-    finally{setLoading(false);}
+    try{await msalInstance.loginRedirect(loginRequest);}
+    catch(e){console.error(e);setLoading(false);}
   };
   return(
     <div style={{minHeight:"100vh",background:"#0B1729",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist','Geist Sans',system-ui,sans-serif",padding:24}}>
@@ -328,11 +327,15 @@ export default function App(){
   const isMobile=useIsMobile();
 
   useEffect(()=>{
-    msalInstance.handleRedirectPromise().then(()=>{
+    msalInstance.handleRedirectPromise().then(result=>{
+      // result is non-null when returning from a redirect login
       const accounts=msalInstance.getAllAccounts();
       if(accounts.length>0)setAuthState("loggedIn");
       else setAuthState("loggedOut");
-    }).catch(()=>setAuthState("loggedOut"));
+    }).catch(err=>{
+      console.error("Redirect error:",err);
+      setAuthState("loggedOut");
+    });
   },[]);
 
   useEffect(()=>{
@@ -408,7 +411,7 @@ export default function App(){
   const navItems=allNavItems.filter(n=>n.roles.includes(user?.role||"tech"));
   const mobileNavItems=navItems.filter(n=>!["assessors","manage"].includes(n.id));
 
-  const handleSignOut=()=>{msalInstance.logoutPopup();setAuthState("loggedOut");setUser(null);};
+  const handleSignOut=()=>{msalInstance.logoutRedirect();setUser(null);};
 
   if(authState==="loading")return(
     <div style={{minHeight:"100vh",background:"#0B1729",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif",color:"#94A3B8",fontSize:14}}>Loading…</div>
