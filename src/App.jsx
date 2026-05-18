@@ -1,4 +1,53 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
+
+// ─── MSAL CONFIG ─────────────────────────────────────────────────────────────
+const msalConfig = {
+  auth: {
+    clientId: "0a54654f-ae37-45ed-92f7-e18666ad80f9",
+    authority: "https://login.microsoftonline.com/701012de-b85f-4128-a794-fa585f8fdf2d",
+    redirectUri: window.location.origin,
+  },
+  cache: { cacheLocation: "sessionStorage", storeAuthStateInCookie: false },
+};
+const msalInstance = new PublicClientApplication(msalConfig);
+await msalInstance.initialize();
+const loginRequest = { scopes: ["openid","profile","email","User.Read"] };
+
+// ─── API LAYER ────────────────────────────────────────────────────────────────
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
+async function getToken() {
+  const accounts = msalInstance.getAllAccounts();
+  if (accounts.length === 0) throw new Error("Not signed in");
+  try {
+    const resp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] });
+    return resp.idToken;
+  } catch (err) {
+    if (err instanceof InteractionRequiredAuthError) {
+      const resp = await msalInstance.acquireTokenPopup({ ...loginRequest, account: accounts[0] });
+      return resp.idToken;
+    }
+    throw err;
+  }
+}
+
+async function api(method, path, body) {
+  const token = await getToken();
+  const res = await fetch(`${API_BASE}${path}`, {
+    method,
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || res.statusText);
+  }
+  return res.json();
+}
+const apiGet  = (path)       => api("GET",    path);
+const apiPost = (path, body) => api("POST",   path, body);
+const apiDel  = (path)       => api("DELETE", path);
 
 const T = {
   navy:'#0B1729', navyAlt:'#142239', navyEdge:'#1E2C45',
@@ -235,57 +284,141 @@ function ArchiveModal({item,onConfirm,onCancel}){
 }
 
 // ─── MAIN APP ────────────────────────────────────────────────────────────────
+
+// ─── LOGIN SCREEN ─────────────────────────────────────────────────────────────
+function LoginScreen({onLogin,error}){
+  const [loading,setLoading]=useState(false);
+  const handleLogin=async()=>{
+    setLoading(true);
+    try{await msalInstance.loginPopup(loginRequest);onLogin();}
+    catch(e){console.error(e);}
+    finally{setLoading(false);}
+  };
+  return(
+    <div style={{minHeight:"100vh",background:"#0B1729",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist','Geist Sans',system-ui,sans-serif",padding:24}}>
+      <div style={{background:"#FFFFFF",borderRadius:16,padding:"40px 36px",maxWidth:400,width:"100%",textAlign:"center",boxShadow:"0 24px 80px rgba(0,0,0,0.4)"}}>
+        <img src={LOGO_URI} alt="InfoTank" style={{height:48,width:"auto",objectFit:"contain",marginBottom:24}}/>
+        <div style={{fontFamily:"'Geist',sans-serif",fontWeight:700,fontSize:22,color:"#0F172A",marginBottom:8}}>Assessment Platform</div>
+        <div style={{fontFamily:"'Geist',sans-serif",fontSize:14,color:"#64748B",marginBottom:32,lineHeight:1.55}}>Sign in with your InfoTank Microsoft account to continue.</div>
+        {error&&<div style={{background:"#FEF2F2",border:"1px solid #FCA5A5",borderRadius:8,padding:"10px 14px",marginBottom:16,fontFamily:"'Geist',sans-serif",fontSize:13,color:"#B91C1C"}}>{error}</div>}
+        <button onClick={handleLogin} disabled={loading} style={{width:"100%",padding:"13px 0",background:loading?"#e2e8f0":"#0B1729",color:loading?"#64748B":"white",border:"none",borderRadius:10,cursor:loading?"default":"pointer",fontFamily:"'Geist',sans-serif",fontWeight:700,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
+          <svg width="20" height="20" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg>
+          {loading?"Signing in…":"Sign in with Microsoft"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App(){
+  const [authState,setAuthState]=useState("loading");
+  const [user,setUser]=useState(null);
+  const [catalog,setCatalog]=useState(DEFAULT_CATALOG);
+  const [clients,setClients]=useState(DEFAULT_CLIENTS);
+  const [clientMeta,setClientMeta]=useState({});
+  const [techs,setTechs]=useState(DEFAULT_TECHS);
+  const [assessments,setAssessments]=useState({});
+  const [archived,setArchived]=useState({});
+  const [dataLoaded,setDataLoaded]=useState(false);
+  const [dataError,setDataError]=useState(null);
   const [view,setView]=useState("home");
-  const [catalog,setCatalog]=useState(()=>lsGet("catalog")||DEFAULT_CATALOG);
-  const [clients,setClients]=useState(()=>lsGet("clients")||DEFAULT_CLIENTS);
-  const [clientMeta,setClientMeta]=useState(()=>lsGet("clientMeta")||{});
-  const [techs,setTechs]=useState(()=>lsGet("techs")||DEFAULT_TECHS);
-  const [assessments,setAssessments]=useState(()=>lsGet("assessments")||{});
-  const [archived,setArchived]=useState(()=>lsGet("archived")||{}); // {client_qid: {note,archivedAt}}
   const [activeClient,setActiveClient]=useState(null);
   const [savedMsg,setSavedMsg]=useState("");
   const isMobile=useIsMobile();
 
-  const persist=useCallback((updates={})=>{
-    if(updates.catalog!==undefined){lsSet("catalog",updates.catalog);setCatalog(updates.catalog);}
-    if(updates.clients!==undefined){lsSet("clients",updates.clients);setClients(updates.clients);}
-    if(updates.clientMeta!==undefined){lsSet("clientMeta",updates.clientMeta);setClientMeta(updates.clientMeta);}
-    if(updates.techs!==undefined){lsSet("techs",updates.techs);setTechs(updates.techs);}
-    if(updates.assessments!==undefined){lsSet("assessments",updates.assessments);setAssessments(updates.assessments);}
-    if(updates.archived!==undefined){lsSet("archived",updates.archived);setArchived(updates.archived);}
-    setSavedMsg("SAVED");setTimeout(()=>setSavedMsg(""),1500);
+  useEffect(()=>{
+    msalInstance.handleRedirectPromise().then(()=>{
+      const accounts=msalInstance.getAllAccounts();
+      if(accounts.length>0)setAuthState("loggedIn");
+      else setAuthState("loggedOut");
+    }).catch(()=>setAuthState("loggedOut"));
   },[]);
 
-  const archiveKey=(client,qid)=>`${client}__${qid}`;
-  const archiveItem=(client,qid,note)=>{
-    const k=archiveKey(client,qid);
-    const newArchived={...archived,[k]:{note,archivedAt:new Date().toISOString()}};
-    persist({archived:newArchived});
-  };
-  const unarchiveItem=(client,qid)=>{
-    const k=archiveKey(client,qid);
-    const newArchived={...archived};delete newArchived[k];
-    persist({archived:newArchived});
-  };
-  const isArchived=(client,qid)=>!!archived[archiveKey(client,qid)];
+  useEffect(()=>{
+    if(authState!=="loggedIn")return;
+    (async()=>{
+      try{
+        const [meRes,catalogRes,clientsRes,clientMetaRes,techsRes,assessmentsRes,archivedRes]=await Promise.all([
+          apiGet("/api/me"),
+          apiGet("/api/kv/catalog"),
+          apiGet("/api/kv/clients"),
+          apiGet("/api/kv/clientMeta"),
+          apiGet("/api/kv/techs"),
+          apiGet("/api/assessments"),
+          apiGet("/api/archived"),
+        ]);
+        setUser(meRes);
+        if(catalogRes.value)setCatalog(catalogRes.value);
+        if(clientsRes.value)setClients(clientsRes.value);
+        if(clientMetaRes.value)setClientMeta(clientMetaRes.value);
+        if(techsRes.value)setTechs(techsRes.value);
+        setAssessments(assessmentsRes.assessments||{});
+        setArchived(archivedRes.archived||{});
+        setDataLoaded(true);
+      }catch(err){
+        console.error("Load error:",err);
+        setDataError(err.message);
+        setDataLoaded(true);
+      }
+    })();
+  },[authState]);
 
-  const navItems=[
-    {id:"home",label:"Home",icon:<HomeIcon/>},
-    {id:"assess",label:"Assessment",icon:<AssessIcon/>},
-    {id:"dashboard",label:"Dashboard",icon:<DashIcon/>},
-    {id:"remediation",label:"Remediation",icon:<RemIcon/>},
-    {id:"assessors",label:"Assessors",icon:<StatsIcon/>},
-    {id:"manage",label:"Questions",icon:<QIcon/>},
-    {id:"clients",label:"Clients",icon:<ClientsIcon/>},
+  const showSaved=()=>{setSavedMsg("SAVED");setTimeout(()=>setSavedMsg(""),1500);};
+
+  const saveKV=async(key,value)=>{await apiPost(`/api/kv/${key}`,{value});showSaved();};
+
+  const saveAssessments=async(newAsm)=>{
+    setAssessments(newAsm);
+    // Find which client changed and save just that client's latest entry
+    for(const client of Object.keys(newAsm)){
+      const hist=newAsm[client]||[];
+      if(hist.length===0)continue;
+      const latest=hist[hist.length-1];
+      const id=latest._id;
+      await apiPost(`/api/assessments/${client}`,{data:latest,submitted:!!latest.submitted,assessmentId:id});
+    }
+    showSaved();
+  };
+
+  const archiveItem=async(client,qid,note)=>{
+    const key=`${client}__${qid}`;
+    await apiPost(`/api/archived/${key}`,{note});
+    setArchived(prev=>({...prev,[key]:{note,archivedAt:new Date().toISOString()}}));
+  };
+
+  const unarchiveItem=async(client,qid)=>{
+    const key=`${client}__${qid}`;
+    await apiDel(`/api/archived/${key}`);
+    setArchived(prev=>{const n={...prev};delete n[key];return n;});
+  };
+
+  const isArchived=(client,qid)=>!!archived[`${client}__${qid}`];
+  const isManager=user?.role==="manager";
+
+  const allNavItems=[
+    {id:"home",      label:"Home",        icon:<HomeIcon/>,    roles:["tech","manager"]},
+    {id:"assess",    label:"Assessment",  icon:<AssessIcon/>,  roles:["tech","manager"]},
+    {id:"dashboard", label:"Dashboard",   icon:<DashIcon/>,    roles:["tech","manager"]},
+    {id:"remediation",label:"Remediation",icon:<RemIcon/>,     roles:["tech","manager"]},
+    {id:"assessors", label:"Assessors",   icon:<StatsIcon/>,   roles:["manager"]},
+    {id:"manage",    label:"Questions",   icon:<QIcon/>,       roles:["manager"]},
+    {id:"clients",   label:"Clients",     icon:<ClientsIcon/>, roles:["tech","manager"]},
   ];
-  const mobileNavItems=[
-    {id:"home",label:"Home",icon:<HomeIcon/>},
-    {id:"assess",label:"Assessment",icon:<AssessIcon/>},
-    {id:"dashboard",label:"Dashboard",icon:<DashIcon/>},
-    {id:"remediation",label:"Remediation",icon:<RemIcon/>},
-    {id:"clients",label:"Clients",icon:<ClientsIcon/>},
-  ];
+  const navItems=allNavItems.filter(n=>n.roles.includes(user?.role||"tech"));
+  const mobileNavItems=navItems.filter(n=>!["assessors","manage"].includes(n.id));
+
+  const handleSignOut=()=>{msalInstance.logoutPopup();setAuthState("loggedOut");setUser(null);};
+
+  if(authState==="loading")return(
+    <div style={{minHeight:"100vh",background:"#0B1729",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif",color:"#94A3B8",fontSize:14}}>Loading…</div>
+  );
+  if(authState==="loggedOut")return <LoginScreen onLogin={()=>setAuthState("loggedIn")}/>;
+  if(!dataLoaded)return(
+    <div style={{minHeight:"100vh",background:"#F4F5F7",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif",color:"#64748B",fontSize:14}}>
+      {dataError?`Error: ${dataError} — check Railway API connection`:"Loading data…"}
+    </div>
+  );
 
   return(
     <div style={{fontFamily:FONT,minHeight:"100vh",background:T.bg,color:T.ink,maxWidth:"100vw",overflowX:"hidden"}}>
@@ -304,27 +437,38 @@ export default function App(){
                 );})}
               </div>
             </div>
-            <div style={{fontFamily:MONO,fontSize:11,color:"#7B8AA3",letterSpacing:0.4}}>{savedMsg}</div>
+            <div style={{display:"flex",alignItems:"center",gap:16}}>
+              {savedMsg&&<span style={{fontFamily:MONO,fontSize:11,color:T.accentGlow,letterSpacing:0.4}}>{savedMsg}</span>}
+              {user&&(
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <div style={{textAlign:"right"}}>
+                    <div style={{fontFamily:FONT,fontSize:13,fontWeight:600,color:"#E8EDF5"}}>{user.name}</div>
+                    <div style={{fontFamily:MONO,fontSize:10,color:"#7B8AA3",textTransform:"uppercase",letterSpacing:0.3}}>{user.role}</div>
+                  </div>
+                  <button onClick={handleSignOut} style={{background:"rgba(255,255,255,0.08)",color:"#94A3B8",border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:"5px 12px",cursor:"pointer",fontFamily:FONT,fontSize:12,fontWeight:600}}>Sign out</button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
       {isMobile&&(
         <div style={{background:T.navy,position:"sticky",top:0,zIndex:100,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <img src={LOGO_URI} alt="InfoTank" style={{height:26,width:"auto",objectFit:"contain"}}/>
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
             {savedMsg&&<span style={{fontFamily:MONO,fontSize:10,color:T.accentGlow}}>{savedMsg}</span>}
-            <span style={{fontFamily:MONO,fontSize:10,color:"#7B8AA3"}}>{new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</span>
+            {user&&<span style={{fontFamily:FONT,fontSize:12,color:"#94A3B8"}}>{user.name.split(" ")[0]}</span>}
           </div>
         </div>
       )}
       <div style={{maxWidth:isMobile?"100%":1400,margin:"0 auto",padding:isMobile?"16px 0 80px":"28px 24px"}}>
         {view==="home"&&<HomeView clients={clients} clientMeta={clientMeta} assessments={assessments} catalog={catalog} archived={archived} isMobile={isMobile} onStart={c=>{setActiveClient(c);setView("assess");}} onDashboard={c=>{setActiveClient(c);setView("dashboard");}}/>}
-        {view==="assess"&&<AssessView clients={clients} catalog={catalog} assessments={assessments} techs={techs} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} onSave={asm=>persist({assessments:asm})}/>}
+        {view==="assess"&&<AssessView clients={clients} catalog={catalog} assessments={assessments} techs={techs} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} onSave={saveAssessments}/>}
         {view==="dashboard"&&<DashboardView clients={clients} assessments={assessments} catalog={catalog} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile}/>}
-        {view==="remediation"&&<RemediationView clients={clients} assessments={assessments} catalog={catalog} techs={techs} archived={archived} isMobile={isMobile} onArchive={archiveItem} onUnarchive={unarchiveItem} isArchived={isArchived} onNavigate={(c)=>{setActiveClient(c);setView("assess");}}/>}
-        {view==="assessors"&&<AssessorsView assessments={assessments} catalog={catalog} techs={techs} clients={clients} isMobile={isMobile} onSaveTechs={t=>persist({techs:t})}/>}
-        {view==="manage"&&<ManageView catalog={catalog} techs={techs} isMobile={isMobile} onSave={c=>persist({catalog:c})}/>}
-        {view==="clients"&&<ClientsView clients={clients} clientMeta={clientMeta} assessments={assessments} catalog={catalog} isMobile={isMobile} onSave={(c,m)=>persist({clients:c,clientMeta:m})} onStart={c=>{setActiveClient(c);setView("assess");}} onDashboard={c=>{setActiveClient(c);setView("dashboard");}}/>}
+        {view==="remediation"&&<RemediationView clients={clients} assessments={assessments} catalog={catalog} techs={techs} archived={archived} isMobile={isMobile} onArchive={archiveItem} onUnarchive={unarchiveItem} isArchived={isArchived} onNavigate={c=>{setActiveClient(c);setView("assess");}}/>}
+        {view==="assessors"&&isManager&&<AssessorsView assessments={assessments} catalog={catalog} techs={techs} clients={clients} isMobile={isMobile} onSaveTechs={async t=>{setTechs(t);await saveKV("techs",t);}}/>}
+        {view==="manage"&&isManager&&<ManageView catalog={catalog} techs={techs} isMobile={isMobile} onSave={async c=>{setCatalog(c);await saveKV("catalog",c);}}/>}
+        {view==="clients"&&<ClientsView clients={clients} clientMeta={clientMeta} assessments={assessments} catalog={catalog} isMobile={isMobile} onSave={async(c,m)=>{setClients(c);setClientMeta(m);await saveKV("clients",c);await saveKV("clientMeta",m);}} onStart={c=>{setActiveClient(c);setView("assess");}} onDashboard={c=>{setActiveClient(c);setView("dashboard");}}/>}
       </div>
       {isMobile&&(
         <div style={{position:"fixed",bottom:0,left:0,right:0,background:T.navy,borderTop:`1px solid ${T.navyEdge}`,display:"flex",zIndex:200,paddingBottom:"env(safe-area-inset-bottom,0px)"}}>
@@ -340,8 +484,6 @@ export default function App(){
     </div>
   );
 }
-
-// ─── ICONS ───────────────────────────────────────────────────────────────────
 function HomeIcon(){return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;}
 function AssessIcon(){return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>;}
 function DashIcon(){return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;}
