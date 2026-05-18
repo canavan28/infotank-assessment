@@ -226,6 +226,12 @@ export default function App(){
     {id:"manage",label:"Questions",icon:<QIcon/>},
     {id:"clients",label:"Clients",icon:<ClientsIcon/>},
   ];
+  const mobileNavItems=[
+    {id:"home",label:"Home",icon:<HomeIcon/>},
+    {id:"assess",label:"Assessment",icon:<AssessIcon/>},
+    {id:"dashboard",label:"Dashboard",icon:<DashIcon/>},
+    {id:"clients",label:"Clients",icon:<ClientsIcon/>},
+  ];
 
   return(
     <div style={{fontFamily:FONT,minHeight:"100vh",background:T.bg,color:T.ink,maxWidth:"100vw",overflowX:"hidden"}}>
@@ -261,14 +267,14 @@ export default function App(){
         {view==="home"&&<HomeView clients={clients} assessments={assessments} catalog={catalog} isMobile={isMobile} onStart={c=>{setActiveClient(c);setView("assess");}} onDashboard={c=>{setActiveClient(c);setView("dashboard");}}/>}
         {view==="assess"&&<AssessView clients={clients} catalog={catalog} assessments={assessments} techs={techs} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} onSave={(asm)=>{setAssessments(asm);persist(null,null,asm,null);}}/>}
         {view==="dashboard"&&<DashboardView clients={clients} assessments={assessments} catalog={catalog} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile}/>}
-        {view==="assessors"&&<AssessorsView assessments={assessments} catalog={catalog} techs={techs} clients={clients} isMobile={isMobile}/>}
+        {view==="assessors"&&<AssessorsView assessments={assessments} catalog={catalog} techs={techs} clients={clients} isMobile={isMobile} onSaveTechs={t=>{setTechs(t);persist(null,null,null,t);}}/>}
         {view==="manage"&&<ManageView catalog={catalog} techs={techs} isMobile={isMobile} onSave={c=>{setCatalog(c);persist(c,null,null,null);}}/>}
         {view==="clients"&&<ClientsView clients={clients} assessments={assessments} catalog={catalog} isMobile={isMobile} onSave={c=>{setClients(c);persist(null,c,null,null);}} onStart={c=>{setActiveClient(c);setView("assess");}} onDashboard={c=>{setActiveClient(c);setView("dashboard");}}/>}
         {view==="techs"&&<TechsView techs={techs} onSave={t=>{setTechs(t);persist(null,null,null,t);}} isMobile={isMobile}/>}
       </div>
       {isMobile&&(
         <div style={{position:"fixed",bottom:0,left:0,right:0,background:T.navy,borderTop:`1px solid ${T.navyEdge}`,display:"flex",zIndex:200,paddingBottom:"env(safe-area-inset-bottom,0px)"}}>
-          {navItems.map(n=>{const active=view===n.id;return(
+          {mobileNavItems.map(n=>{const active=view===n.id;return(
             <button key={n.id} onClick={()=>setView(n.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"10px 2px 8px",background:"transparent",border:"none",cursor:"pointer",color:active?T.accentGlow:"#64748B",position:"relative"}}>
               <span style={{fontSize:18}}>{n.icon}</span>
               <span style={{fontFamily:FONT,fontSize:9,fontWeight:active?700:500}}>{n.label}</span>
@@ -854,15 +860,24 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
 }
 
 // ─── ASSESSORS DASHBOARD ─────────────────────────────────────────────────────
-function AssessorsView({assessments,catalog,techs,clients,isMobile}){
+function AssessorsView({assessments,catalog,techs,clients,isMobile,onSaveTechs}){
   const [days,setDays]=useState(90);
+  const [newTech,setNewTech]=useState("");
+  const [techList,setTechList]=useState(techs);
+  const [techDirty,setTechDirty]=useState(false);
   const cutoff=new Date(Date.now()-days*24*60*60*1000);
 
+  // Only include clients that have any activity in the time window
+  const activeClients=clients.filter(client=>{
+    const hist=assessments[client]||[];
+    return hist.some(a=>Object.values(a.responses||{}).some(r=>r.answeredAt&&new Date(r.answeredAt)>cutoff));
+  });
+
   // Build stats per tech
-  const stats=techs.map(tech=>{
+  const stats=techList.map(tech=>{
     let total=0;
     const perClient={};
-    clients.forEach(client=>{
+    activeClients.forEach(client=>{
       const hist=assessments[client]||[];
       let clientCount=0;
       hist.forEach(assessment=>{
@@ -879,13 +894,15 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile}){
     return{tech,total,perClient,lastActive};
   }).sort((a,b)=>b.total-a.total);
 
-  const pad=isMobile?"16px":"0";
+  const addTech=()=>{if(newTech.trim()&&!techList.includes(newTech.trim())){setTechList(p=>[...p,newTech.trim()]);setNewTech("");setTechDirty(true);}};
+  const removeTech=t=>{setTechList(p=>p.filter(x=>x!==t));setTechDirty(true);};
+
   return(
-    <div style={{padding:`0 ${pad}`}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",margin:"16px 0 20px",flexWrap:"wrap",gap:10}}>
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",margin:"0 0 20px",flexWrap:"wrap",gap:10}}>
         <div>
           <div style={{fontFamily:FONT,fontWeight:700,fontSize:20,color:T.ink}}>Assessor Performance</div>
-          <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginTop:2}}>Questions answered per technician</div>
+          <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginTop:2}}>Questions answered per technician · {activeClients.length} active clients shown</div>
         </div>
         <select value={days} onChange={e=>setDays(Number(e.target.value))} style={{fontFamily:FONT,fontSize:13,color:T.ink,border:`1px solid ${T.border}`,borderRadius:8,padding:"8px 14px",background:"white",cursor:"pointer"}}>
           <option value={7}>Last 7 days</option>
@@ -897,7 +914,7 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile}){
       </div>
 
       {/* Summary cards */}
-      <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr 1fr":"repeat(auto-fill,minmax(200px,1fr))",gap:12,marginBottom:24}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:12,marginBottom:24}}>
         {stats.map(s=>(
           <div key={s.tech} style={{background:T.card,borderRadius:12,border:`1px solid ${T.border}`,padding:"16px 18px"}}>
             <div style={{fontFamily:FONT,fontWeight:600,fontSize:15,color:T.ink,marginBottom:4}}>{s.tech}</div>
@@ -908,32 +925,58 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile}){
         ))}
       </div>
 
-      {/* Per-client breakdown */}
-      <div style={{background:T.card,borderRadius:12,border:`1px solid ${T.border}`,overflow:"hidden"}}>
-        <div style={{padding:"16px 20px",borderBottom:`1px solid ${T.border}`}}>
+      {/* Per-client breakdown — dynamic columns */}
+      <div style={{background:T.card,borderRadius:12,border:`1px solid ${T.border}`,overflow:"hidden",marginBottom:32}}>
+        <div style={{padding:"16px 20px",borderBottom:`1px solid ${T.border}`,display:"flex",justifyContent:"space-between",alignItems:"baseline"}}>
           <div style={{fontFamily:FONT,fontWeight:600,fontSize:15,color:T.ink}}>Breakdown by Client</div>
+          {activeClients.length===0&&<div style={{fontFamily:FONT,fontSize:13,color:T.muted}}>No activity in this period</div>}
         </div>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontFamily:FONT,fontSize:13}}>
-            <thead>
-              <tr style={{background:"#FAFBFC"}}>
-                <th style={{textAlign:"left",padding:"10px 16px",fontFamily:MONO,fontSize:10,fontWeight:600,color:T.muted,letterSpacing:0.5,textTransform:"uppercase",borderBottom:`1px solid ${T.border}`}}>Assessor</th>
-                {clients.map(c=><th key={c} style={{textAlign:"center",padding:"10px 12px",fontFamily:MONO,fontSize:10,fontWeight:600,color:T.muted,letterSpacing:0.5,textTransform:"uppercase",borderBottom:`1px solid ${T.border}`,whiteSpace:"nowrap"}}>{c}</th>)}
-                <th style={{textAlign:"center",padding:"10px 12px",fontFamily:MONO,fontSize:10,fontWeight:600,color:T.accent,letterSpacing:0.5,textTransform:"uppercase",borderBottom:`1px solid ${T.border}`}}>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.map((s,i)=>(
-                <tr key={s.tech} style={{borderBottom:i<stats.length-1?`1px solid ${T.border}`:"none"}}>
-                  <td style={{padding:"12px 16px",fontWeight:600,color:T.ink}}>{s.tech}</td>
-                  {clients.map(c=>(
-                    <td key={c} style={{padding:"12px 12px",textAlign:"center",fontFamily:MONO,fontSize:13,color:s.perClient[c]?T.accent:T.muted}}>{s.perClient[c]||"—"}</td>
-                  ))}
-                  <td style={{padding:"12px 12px",textAlign:"center",fontFamily:MONO,fontSize:14,fontWeight:700,color:T.accent}}>{s.total||"—"}</td>
+        {activeClients.length>0&&(
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontFamily:FONT,fontSize:13}}>
+              <thead>
+                <tr style={{background:"#FAFBFC"}}>
+                  <th style={{textAlign:"left",padding:"10px 16px",fontFamily:MONO,fontSize:10,fontWeight:600,color:T.muted,letterSpacing:0.5,textTransform:"uppercase",borderBottom:`1px solid ${T.border}`,whiteSpace:"nowrap"}}>Assessor</th>
+                  {activeClients.map(c=><th key={c} style={{textAlign:"center",padding:"10px 12px",fontFamily:MONO,fontSize:10,fontWeight:600,color:T.muted,letterSpacing:0.5,textTransform:"uppercase",borderBottom:`1px solid ${T.border}`,whiteSpace:"nowrap"}}>{c}</th>)}
+                  <th style={{textAlign:"center",padding:"10px 12px",fontFamily:MONO,fontSize:10,fontWeight:600,color:T.accent,letterSpacing:0.5,textTransform:"uppercase",borderBottom:`1px solid ${T.border}`}}>Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {stats.map((s,i)=>(
+                  <tr key={s.tech} style={{borderBottom:i<stats.length-1?`1px solid ${T.border}`:"none"}}>
+                    <td style={{padding:"12px 16px",fontWeight:600,color:T.ink,whiteSpace:"nowrap"}}>{s.tech}</td>
+                    {activeClients.map(c=>(
+                      <td key={c} style={{padding:"12px 12px",textAlign:"center",fontFamily:MONO,fontSize:13,color:s.perClient[c]?T.accent:T.muted}}>{s.perClient[c]||"—"}</td>
+                    ))}
+                    <td style={{padding:"12px 12px",textAlign:"center",fontFamily:MONO,fontSize:14,fontWeight:700,color:T.accent}}>{s.total||"—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* ── Technician Management ── */}
+      <div style={{borderTop:`2px solid ${T.border}`,paddingTop:28}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:10}}>
+          <div>
+            <div style={{fontFamily:FONT,fontWeight:700,fontSize:18,color:T.ink}}>Manage Technicians</div>
+            <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginTop:2}}>Add or remove assessors from the system</div>
+          </div>
+          {techDirty&&<button onClick={()=>{onSaveTechs(techList);setTechDirty(false);}} style={{background:T.ok,color:"white",border:"none",borderRadius:8,padding:"9px 18px",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:13}}>Save Changes</button>}
+        </div>
+        <div style={{display:"flex",gap:8,marginBottom:14,maxWidth:480}}>
+          <input value={newTech} onChange={e=>setNewTech(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTech()} placeholder="Add technician name…" style={{flex:1,border:`1px solid ${T.border}`,borderRadius:8,padding:"10px 14px",fontSize:14,fontFamily:FONT}}/>
+          <button onClick={addTech} style={{background:T.navy,color:"white",border:"none",borderRadius:8,padding:"10px 18px",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:14}}>Add</button>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:8,maxWidth:800}}>
+          {techList.map(t=>(
+            <div key={t} style={{background:T.card,borderRadius:10,padding:"12px 16px",border:`1px solid ${T.border}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{fontFamily:FONT,fontWeight:600,fontSize:14,color:T.ink}}>{t}</span>
+              <button onClick={()=>removeTech(t)} style={{background:T.errBg,color:T.err,border:`1px solid ${T.errBorder}`,borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:12,fontFamily:FONT,fontWeight:600}}>Remove</button>
+            </div>
+          ))}
         </div>
       </div>
     </div>
