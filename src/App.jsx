@@ -1514,3 +1514,5 @@ function ClientsView({clients,clientMeta,assessments,catalog,isMobile,onSave,onS
     </div>
   );
 }
+ 
+ 
