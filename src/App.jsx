@@ -25,17 +25,15 @@ async function getToken() {
     const resp = await msalInstance.acquireTokenSilent({ 
       ...loginRequest, 
       account: accounts[0],
-      forceRefresh: false 
+      forceRefresh: false
     });
-    console.log("TOKEN:", resp.idToken?.substring(0, 30));
     return resp.idToken;
   } catch (err) {
     console.error("Token error:", err.errorCode);
-    if (err instanceof InteractionRequiredAuthError || err.errorCode === "block_iframe_reload") {
-      await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
-      return;
-    }
-    throw err;
+    // Clear stale cache and force fresh login
+    await msalInstance.clearCache();
+    await msalInstance.loginRedirect(loginRequest);
+    return;
   }
 }
 
