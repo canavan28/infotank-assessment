@@ -22,8 +22,8 @@ async function getToken() {
   const accounts = msalInstance.getAllAccounts();
   if (accounts.length === 0) throw new Error("Not signed in");
   try {
-    const resp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] });
-    return resp.idToken;
+const resp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] });
+return resp.accessToken;    return resp.idToken;
   } catch (err) {
     if (err instanceof InteractionRequiredAuthError) {
       await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
