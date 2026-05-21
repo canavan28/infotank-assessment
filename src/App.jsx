@@ -22,11 +22,16 @@ async function getToken() {
   const accounts = msalInstance.getAllAccounts();
   if (accounts.length === 0) throw new Error("Not signed in");
   try {
-    const resp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] });
-    console.log("TOKEN TYPE:", typeof resp.accessToken, resp.accessToken?.substring(0, 50));
-    return resp.accessToken;
+    const resp = await msalInstance.acquireTokenSilent({ 
+      ...loginRequest, 
+      account: accounts[0],
+      forceRefresh: false 
+    });
+    console.log("TOKEN:", resp.idToken?.substring(0, 30));
+    return resp.idToken;
   } catch (err) {
-    if (err instanceof InteractionRequiredAuthError) {
+    console.error("Token error:", err.errorCode);
+    if (err instanceof InteractionRequiredAuthError || err.errorCode === "block_iframe_reload") {
       await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
       return;
     }
