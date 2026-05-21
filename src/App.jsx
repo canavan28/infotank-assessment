@@ -22,12 +22,13 @@ async function getToken() {
   const accounts = msalInstance.getAllAccounts();
   if (accounts.length === 0) throw new Error("Not signed in");
   try {
-const resp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] });
-return resp.accessToken;    return resp.idToken;
+    const resp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] });
+    console.log("TOKEN TYPE:", typeof resp.accessToken, resp.accessToken?.substring(0, 50));
+    return resp.accessToken;
   } catch (err) {
     if (err instanceof InteractionRequiredAuthError) {
       await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
-      return; // stop execution — page will redirect
+      return;
     }
     throw err;
   }
