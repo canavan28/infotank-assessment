@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect, useCallback, useRef } from "react";
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
 
-// ΓöÇΓöÇΓöÇ MSAL CONFIG ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── MSAL CONFIG ─────────────────────────────────────────────────────────────
 const msalConfig = {
   auth: {
     clientId: "0a54654f-ae37-45ed-92f7-e18666ad80f9",
@@ -15,7 +15,7 @@ const msalInstance = new PublicClientApplication(msalConfig);
 await msalInstance.initialize();
 const loginRequest = { scopes: ["openid","profile","email","User.Read"] };
 
-// ΓöÇΓöÇΓöÇ API LAYER ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── API LAYER ────────────────────────────────────────────────────────────────
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 async function getToken() {
@@ -189,7 +189,7 @@ const DEFAULT_CLIENTS = ["AVGroup","COE","LaAmistad","Morton Construction","Phoe
 const DEFAULT_TECHS = ["Marcus Chen","Sarah Johnson","Tyler Brooks","Jordan Lee"];
 const STATUSES = ["Complete","Partial","Missing","N/A"];
 
-// ΓöÇΓöÇΓöÇ HELPERS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function scoreItem(r,weight){
   if(!r||!r.status||r.status==="N/A")return{earned:0,possible:0};
   const p=weight*2;
@@ -236,11 +236,11 @@ function isInProgress(clientName,assessments){
   return hist.some(a=>!a.submitted&&Object.values(a.responses||{}).some(r=>r.status));
 }
 
-// ΓöÇΓöÇΓöÇ STORAGE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
 function lsGet(k){try{const v=localStorage.getItem("it10_"+k);return v?JSON.parse(v):null;}catch{return null;}}
 function lsSet(k,v){try{localStorage.setItem("it10_"+k,JSON.stringify(v));}catch(e){console.error(e);}}
 
-// ΓöÇΓöÇΓöÇ PRIMITIVES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── PRIMITIVES ──────────────────────────────────────────────────────────────
 function CritBadge({kind}){
   const s=kind==="Critical"?{bg:T.critBg,fg:T.critInk}:kind==="High"?{bg:T.hiBg,fg:T.hiInk}:{bg:T.medBg,fg:T.medInk};
   return <span style={{fontFamily:MONO,fontSize:10,fontWeight:600,letterSpacing:0.4,textTransform:"uppercase",padding:"2px 6px",borderRadius:4,background:s.bg,color:s.fg,whiteSpace:"nowrap"}}>{kind}</span>;
@@ -263,7 +263,7 @@ function useIsMobile(){
   return m;
 }
 
-// ΓöÇΓöÇΓöÇ ARCHIVE MODAL ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── ARCHIVE MODAL ────────────────────────────────────────────────────────────
 function ArchiveModal({item,onConfirm,onCancel}){
   const [note,setNote]=useState("");
   return(
@@ -283,9 +283,9 @@ function ArchiveModal({item,onConfirm,onCancel}){
   );
 }
 
-// ΓöÇΓöÇΓöÇ MAIN APP ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── MAIN APP ────────────────────────────────────────────────────────────────
 
-// ΓöÇΓöÇΓöÇ LOGIN SCREEN ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── LOGIN SCREEN ─────────────────────────────────────────────────────────────
 function LoginScreen({onLogin,error}){
   const [loading,setLoading]=useState(false);
   const handleLogin=async()=>{
@@ -309,7 +309,7 @@ function LoginScreen({onLogin,error}){
   );
 }
 
-// ΓöÇΓöÇΓöÇ MAIN APP ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App(){
   const [authState,setAuthState]=useState("loading");
   const [user,setUser]=useState(null);
@@ -495,7 +495,7 @@ function StatsIcon(){return <svg width="18" height="18" viewBox="0 0 24 24" fill
 function QIcon(){return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;}
 function ClientsIcon(){return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>;}
 
-// ΓöÇΓöÇΓöÇ HOME VIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── HOME VIEW ────────────────────────────────────────────────────────────────
 function HomeView({clients,clientMeta,assessments,catalog,archived,isMobile,onStart,onDashboard}){
   const [activeFilter,setActiveFilter]=useState(null);
   const today=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
@@ -591,7 +591,7 @@ function HomeView({clients,clientMeta,assessments,catalog,archived,isMobile,onSt
   );
 }
 
-// ΓöÇΓöÇΓöÇ INTAKE MODAL ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── INTAKE MODAL ─────────────────────────────────────────────────────────────
 function IntakeModal({onConfirm,onCancel}){
   const [hasServer,setHasServer]=useState(null);
   const [hasEntra,setHasEntra]=useState(null);
@@ -629,7 +629,7 @@ function IntakeModal({onConfirm,onCancel}){
   );
 }
 
-// ΓöÇΓöÇΓöÇ ASSESS VIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── ASSESS VIEW ──────────────────────────────────────────────────────────────
 function AssessView({clients,catalog,assessments,techs,activeClient,setActiveClient,isMobile,onSave}){
   const [client,setClient]=useState(activeClient||clients[0]);
   const [responses,setResponses]=useState({});
@@ -774,7 +774,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
     </div>
   );
 
-  // ΓöÇΓöÇ MOBILE ΓöÇΓöÇ
+  // ── MOBILE ──
   if(isMobile){
     if(mobileDetail&&activeQ){
       return(
@@ -857,7 +857,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
     );
   }
 
-  // ΓöÇΓöÇ DESKTOP 3-PANE ΓöÇΓöÇ
+  // ── DESKTOP 3-PANE ──
   return(
     <div style={{display:"flex",flexDirection:"column",gap:0}}>
       <SubmitBanner/>
@@ -979,7 +979,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
   );
 }
 
-// ΓöÇΓöÇΓöÇ DASHBOARD VIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── DASHBOARD VIEW ───────────────────────────────────────────────────────────
 function DashboardView({clients,assessments,catalog,activeClient,setActiveClient,isMobile}){
   const [client,setClient]=useState(activeClient||clients[0]);
   const [capturing,setCapturing]=useState(false);
@@ -1133,7 +1133,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
   );
 }
 
-// ΓöÇΓöÇΓöÇ REMEDIATION VIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── REMEDIATION VIEW ─────────────────────────────────────────────────────────
 function RemediationView({clients,assessments,catalog,techs,archived,isMobile,onArchive,onUnarchive,isArchived,onNavigate}){
   const [filterClient,setFilterClient]=useState("all");
   const [filterStatus,setFilterStatus]=useState("all"); // all, Partial, Missing, Unanswered
@@ -1284,7 +1284,7 @@ function RemediationView({clients,assessments,catalog,techs,archived,isMobile,on
   );
 }
 
-// ΓöÇΓöÇΓöÇ ASSESSORS VIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── ASSESSORS VIEW ───────────────────────────────────────────────────────────
 function AssessorsView({assessments,catalog,techs,clients,isMobile,onSaveTechs}){
   const [days,setDays]=useState(90);
   const [newTech,setNewTech]=useState("");
@@ -1374,7 +1374,7 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile,onSaveTechs})
   );
 }
 
-// ΓöÇΓöÇΓöÇ MANAGE VIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── MANAGE VIEW ──────────────────────────────────────────────────────────────
 function ManageView({catalog,techs,isMobile,onSave}){
   const [items,setItems]=useState(catalog);
   const [editId,setEditId]=useState(null);
@@ -1457,7 +1457,7 @@ function ManageView({catalog,techs,isMobile,onSave}){
   );
 }
 
-// ΓöÇΓöÇΓöÇ CLIENTS VIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─── CLIENTS VIEW ─────────────────────────────────────────────────────────────
 function ClientsView({clients,clientMeta,assessments,catalog,isMobile,onSave,onStart,onDashboard}){
   const [items,setItems]=useState(clients);
   const [newC,setNewC]=useState("");
@@ -1514,3 +1514,4 @@ function ClientsView({clients,clientMeta,assessments,catalog,isMobile,onSave,onS
     </div>
   );
 }
+
