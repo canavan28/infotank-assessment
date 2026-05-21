@@ -27,6 +27,7 @@ async function getToken() {
   } catch (err) {
     if (err instanceof InteractionRequiredAuthError) {
       await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
+      return; // stop execution — page will redirect
     }
     throw err;
   }
@@ -34,6 +35,7 @@ async function getToken() {
 
 async function api(method, path, body) {
   const token = await getToken();
+  if (!token) return; // redirecting, stop here
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
