@@ -1050,7 +1050,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
           {clients.map(c=><option key={c}>{c}</option>)}
         </select>
         <button onClick={handleScreenshot} disabled={!last||capturing} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",background:last?T.navy:"#e2e8f0",color:last?"#E8EDF5":T.muted,border:"none",borderRadius:8,cursor:last?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:12,whiteSpace:"nowrap",flexShrink:0}}>
-          {capturing?"Capturing…":"≡ƒôï Download for PowerPoint"}
+          {capturing?"Capturing…":"📋 Download for PowerPoint"}
         </button>
       </div>
       {!last?(
