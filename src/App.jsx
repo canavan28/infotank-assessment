@@ -378,17 +378,26 @@ export default function App(){
   const saveKV=async(key,value)=>{await apiPost(`/api/kv/${key}`,{value});showSaved();};
 
   const saveAssessments=async(newAsm)=>{
-    setAssessments(newAsm);
-    // Find which client changed and save just that client's latest entry
-    for(const client of Object.keys(newAsm)){
-      const hist=newAsm[client]||[];
-      if(hist.length===0)continue;
-      const latest=hist[hist.length-1];
-      const id=latest._id;
-      await apiPost(`/api/assessments/${client}`,{data:latest,submitted:!!latest.submitted,assessmentId:id});
+  setAssessments(newAsm);
+  // Only save clients that have data
+  for(const client of Object.keys(newAsm)){
+    const hist=newAsm[client]||[];
+    if(hist.length===0)continue;
+    const latest=hist[hist.length-1];
+    const id=latest._id;
+    const res=await apiPost(`/api/assessments/${client}`,{data:latest,submitted:!!latest.submitted,assessmentId:id});
+    // If this was a new INSERT, store the returned id back so future saves UPDATE instead of INSERT
+    if(!id&&res?.id){
+      setAssessments(prev=>{
+        const updatedHist=[...(prev[client]||[])];
+        const idx=updatedHist.findIndex(a=>a===latest||(!a._id&&!a.submitted));
+        if(idx>=0)updatedHist[idx]={...updatedHist[idx],_id:res.id};
+        return{...prev,[client]:updatedHist};
+      });
     }
-    showSaved();
-  };
+  }
+  showSaved();
+};
 
   const archiveItem=async(client,qid,note)=>{
     const key=`${client}__${qid}`;
