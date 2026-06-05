@@ -377,7 +377,7 @@ export default function App(){
 
   const saveKV=async(key,value)=>{await apiPost(`/api/kv/${key}`,{value});showSaved();};
 
-  cconst saveAssessments=async(newAsm)=>{
+  const saveAssessments=async(newAsm)=>{
   setAssessments(newAsm);
   for(const client of Object.keys(newAsm)){
     const hist=newAsm[client]||[];
@@ -951,7 +951,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
               const r=responses[q.id]||{};const isActive=activeQId===q.id;
               const sc=r.status==="Complete"?T.ok:r.status==="Partial"?T.warn:r.status==="Missing"?T.err:r.status==="N/A"?T.na:"transparent";
               return(
-                <div key={q.id} onClick={()=>setActiveQId(q.id)} style={{display:"flex",gap:8,padding:"10px 12px 10px 10px",cursor:"pointer",borderLeft:`3px solid ${isActive?T.accent:sc}`,borderBottom:`1px solid ${T.border}`,background:isActive?"#fff":T.card}}>
+                <div key={q.id} onClick={()=>setActiveQId(q.id)} style={{display:"flex",gap:8,padding:"10px 12px 10px 10px",cursor:"pointer",borderLeft:`4px solid ${isActive?T.accent:sc}`,borderBottom:`1px solid ${T.border}`,background:isActive?T.accentBg:T.card,boxShadow:isActive?`inset 0 0 0 1px ${T.accent}20`:undefined}}>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{display:"flex",gap:5,marginBottom:3,alignItems:"center",flexWrap:"wrap"}}><CritBadge kind={q.criticality}/><TypeBadge t={q.remedType}/></div>
                     <div style={{fontFamily:FONT,fontSize:12,color:T.ink,lineHeight:1.35,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{q.question}</div>
