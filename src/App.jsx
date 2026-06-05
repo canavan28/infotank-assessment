@@ -831,7 +831,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
           </div>
           <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:"12px 14px",marginBottom:14}}>
             <Eyebrow>Evidence Link</Eyebrow>
-            <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
+            <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} onKeyDown={e=>{if(e.key==="Tab"&&!e.shiftKey){const idx=filteredQ.findIndex(q=>q.id===activeQId);const next=filteredQ[idx+1];if(next){e.preventDefault();setActiveQId(next.id);}}}} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
           </div>
           <div style={{display:"flex",gap:10}}>
             {(()=>{const idx=filteredQ.findIndex(q=>q.id===activeQId);const prev=filteredQ[idx-1];const next=filteredQ[idx+1];return(<>
@@ -996,7 +996,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
               </div>
               <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:"11px 13px"}}>
                 <Eyebrow>Evidence Link</Eyebrow>
-                <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
+                <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} onKeyDown={e=>{if(e.key==="Tab"&&!e.shiftKey){const idx=filteredQ.findIndex(q=>q.id===activeQId);const next=filteredQ[idx+1];if(next){e.preventDefault();setActiveQId(next.id);}}}} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
               </div>
             </>
           )}
