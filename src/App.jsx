@@ -1429,6 +1429,43 @@ function ManageView({ catalog, techs, isMobile, onSave }) {
   const addQ = () => { if (!newQ.category || !newQ.question) return; setItems(p => [...p, { ...newQ, id: "custom_" + Date.now(), weight: Number(newQ.weight) }]); setNewQ({ category: "", question: "", standard: "", weight: 1, criticality: "Medium", remedType: "Internal", defaultAssessor: "" }); setAdding(false); setDirty(true); };
   const filtered = items.filter(q => filter === "All" || q.category === filter);
   const pad = isMobile ? "16px" : "0";
+  const [aiReview, setAiReview] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const runAiReview = async () => {
+    setAiLoading(true);
+    setAiReview(null);
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          messages: [{
+            role: "user",
+            content: `You are an IT managed services expert reviewing a technical business review (TBR) assessment questionnaire for an MSP called InfoTank. Review the following assessment questions and provide:
+
+1. **Obsolete or redundant questions** — questions that are outdated, duplicated, or no longer relevant to modern MSP assessments
+2. **Poorly worded questions** — questions that are vague, ambiguous, or won't elicit useful information from a tech doing an onsite assessment
+3. **Missing topics** — important areas an MSP should be assessing that are not covered
+4. **Suggested rewording** — for any poorly worded questions, provide a better version
+
+Be specific and actionable. Format your response with clear sections and bullet points.
+
+Current catalog (${items.length} questions across ${[...new Set(items.map(q => q.category))].length} categories):
+
+${items.map(q => `[${q.category}] ${q.question}`).join('\n')}`
+          }]
+        })
+      });
+      const data = await response.json();
+      setAiReview(data.content[0].text);
+    } catch (err) {
+      setAiReview("Error running review. Please try again.");
+    }
+    setAiLoading(false);
+  };
 
   return (
     <div style={{ padding: `0 ${pad}` }}>
@@ -1436,6 +1473,7 @@ function ManageView({ catalog, techs, isMobile, onSave }) {
         <div><div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 20, color: T.ink }}>Question Library</div><div style={{ fontFamily: FONT, fontSize: 13, color: T.muted, marginTop: 2 }}>{items.length} controls</div></div>
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={() => setAdding(true)} style={{ background: T.navy, color: "white", border: "none", borderRadius: 8, padding: "9px 14px", cursor: "pointer", fontFamily: FONT, fontWeight: 700, fontSize: 13 }}>+ Add</button>
+          <button onClick={runAiReview} disabled={aiLoading} style={{ background: T.purple, color: "white", border: "none", borderRadius: 8, padding: "9px 14px", cursor: aiLoading ? "default" : "pointer", fontFamily: FONT, fontWeight: 700, fontSize: 13 }}>{aiLoading ? "Reviewing…" : "✨ AI Review"}</button>
           {dirty && <button onClick={() => { onSave(items); setDirty(false); }} style={{ background: T.ok, color: "white", border: "none", borderRadius: 8, padding: "9px 14px", cursor: "pointer", fontFamily: FONT, fontWeight: 700, fontSize: 13 }}>Save</button>}
         </div>
       </div>
@@ -1463,6 +1501,15 @@ function ManageView({ catalog, techs, isMobile, onSave }) {
           <button key={cat} onClick={() => setFilter(cat)} style={{ background: filter === cat ? T.navy : T.card, color: filter === cat ? "#fff" : T.ink2, border: `1px solid ${filter === cat ? T.navy : T.border}`, borderRadius: 999, padding: "5px 13px", cursor: "pointer", fontFamily: FONT, fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>{cat}</button>
         ))}
       </div>
+      {aiReview && (
+        <div style={{ background: T.purpleBg, border: `1px solid ${T.purpleBorder}`, borderRadius: 12, padding: 20, marginBottom: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 15, color: T.purple }}>✨ AI Review</div>
+            <button onClick={() => setAiReview(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: T.muted }}>✕</button>
+          </div>
+          <div style={{ fontFamily: FONT, fontSize: 13, color: T.ink, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{aiReview}</div>
+        </div>
+      )}
       <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
         {filtered.map(q => (
           <div key={q.id} style={{ background: T.card, borderRadius: 9, padding: "12px 14px", border: `1px solid ${T.border}`, display: "flex", gap: 10, alignItems: "flex-start" }}>
