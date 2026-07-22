@@ -1436,31 +1436,8 @@ function ManageView({ catalog, techs, isMobile, onSave }) {
     setAiLoading(true);
     setAiReview(null);
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          messages: [{
-            role: "user",
-            content: `You are an IT managed services expert reviewing a technical business review (TBR) assessment questionnaire for an MSP called InfoTank. Review the following assessment questions and provide:
-
-1. **Obsolete or redundant questions** — questions that are outdated, duplicated, or no longer relevant to modern MSP assessments
-2. **Poorly worded questions** — questions that are vague, ambiguous, or won't elicit useful information from a tech doing an onsite assessment
-3. **Missing topics** — important areas an MSP should be assessing that are not covered
-4. **Suggested rewording** — for any poorly worded questions, provide a better version
-
-Be specific and actionable. Format your response with clear sections and bullet points.
-
-Current catalog (${items.length} questions across ${[...new Set(items.map(q => q.category))].length} categories):
-
-${items.map(q => `[${q.category}] ${q.question}`).join('\n')}`
-          }]
-        })
-      });
-      const data = await response.json();
-      setAiReview(data.content[0].text);
+      const res = await apiPost("/api/ai-review", { catalog: items });
+      setAiReview(res.review);
     } catch (err) {
       setAiReview("Error running review. Please try again.");
     }
