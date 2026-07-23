@@ -78,32 +78,32 @@ const DEFAULT_CATALOG = [
   {id:"bk2",category:"Backup",question:"Client has Onsite and Cloud backups in place (NAS, Datto) managed by us",standard:"Backups succeed daily with alerts; all users/shared mailboxes/sites protected.",weight:2,criticality:"High",remedType:"External"},
   {id:"bk3",category:"Backup",question:"Perform a successful backup test",standard:"Quarterly restore tests documented; RPO/RTO meet contract; offsite/immutable copy in place.",weight:2,criticality:"Critical",remedType:"Internal"},
   {id:"bk4",category:"Backup",question:"Perform a successful backup test on a user.",standard:"Quarterly restore tests documented; RPO/RTO meet contract; offsite/immutable copy in place.",weight:2,criticality:"Critical",remedType:"Internal"},
-  {id:"ig1",category:"IT Glue",question:"365/google creds stored and updated - Test",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:2,criticality:"High",remedType:"Internal"},
-  {id:"ig2",category:"IT Glue",question:"Add 3rd-party web/cloud/hosting logins/passwords to ITG",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:2,criticality:"High",remedType:"Internal"},
-  {id:"ig3",category:"IT Glue",question:"Add administrative passwords for each network device to ITG",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:2,criticality:"Critical",remedType:"Internal"},
-  {id:"ig4",category:"IT Glue",question:"All documents properly named for easy searching",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig5",category:"IT Glue",question:"All information about backups is in ITG",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:2,criticality:"High",remedType:"Internal"},
-  {id:"ig6",category:"IT Glue",question:"All LOB applications are documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig7",category:"IT Glue",question:"All of the software licensing is documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig8",category:"IT Glue",question:"All outdated documents have been removed",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig9",category:"IT Glue",question:"All UPS devices are documented for server and network",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig10",category:"IT Glue",question:"All Vendors are documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig11",category:"IT Glue",question:"Company offboarding doc is in ITG and up to date",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig12",category:"IT Glue",question:"Company onboarding doc is in ITG and up to date",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig13",category:"IT Glue",question:"Company workstation setup doc is in ITG and up to date",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig1",category:"IT Glue",question:"365/google creds stored and updated - Test",standard:"Documentation current (≤90 days) and complete for core services.",weight:2,criticality:"High",remedType:"Internal"},
+  {id:"ig2",category:"IT Glue",question:"Add 3rd-party web/cloud/hosting logins/passwords to ITG",standard:"Documentation current (≤90 days) and complete for core services.",weight:2,criticality:"High",remedType:"Internal"},
+  {id:"ig3",category:"IT Glue",question:"Add administrative passwords for each network device to ITG",standard:"Documentation current (≤90 days) and complete for core services.",weight:2,criticality:"Critical",remedType:"Internal"},
+  {id:"ig4",category:"IT Glue",question:"All documents properly named for easy searching",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig5",category:"IT Glue",question:"All information about backups is in ITG",standard:"Documentation current (≤90 days) and complete for core services.",weight:2,criticality:"High",remedType:"Internal"},
+  {id:"ig6",category:"IT Glue",question:"All LOB applications are documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig7",category:"IT Glue",question:"All of the software licensing is documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig8",category:"IT Glue",question:"All outdated documents have been removed",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig9",category:"IT Glue",question:"All UPS devices are documented for server and network",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig10",category:"IT Glue",question:"All Vendors are documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig11",category:"IT Glue",question:"Company offboarding doc is in ITG and up to date",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig12",category:"IT Glue",question:"Company onboarding doc is in ITG and up to date",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig13",category:"IT Glue",question:"Company workstation setup doc is in ITG and up to date",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"ig14",category:"IT Glue",question:"Default workstation admin creds are documented",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:2,criticality:"Critical",remedType:"Internal"},
-  {id:"ig15",category:"IT Glue",question:"Document all network printers",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig16",category:"IT Glue",question:"Document DNS hosting login/password in ITG",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig17",category:"IT Glue",question:"Document floorplan of the office if available",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig18",category:"IT Glue",question:"Document organizational chart if available",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig19",category:"IT Glue",question:"Document the wireless network SSID/authentication",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig20",category:"IT Glue",question:"File sharing is documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig21",category:"IT Glue",question:"Fill out company home page",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig22",category:"IT Glue",question:"ISP information is documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig23",category:"IT Glue",question:"Network diagrams are documented - if complex network",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig24",category:"IT Glue",question:"Printing is documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig25",category:"IT Glue",question:"Servers are documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ig26",category:"IT Glue",question:"Voice systems are documented",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig15",category:"IT Glue",question:"Document all network printers",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig16",category:"IT Glue",question:"Document DNS hosting login/password in ITG",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig17",category:"IT Glue",question:"Document floorplan of the office if available",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig18",category:"IT Glue",question:"Document organizational chart if available",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig19",category:"IT Glue",question:"Document the wireless network SSID/authentication",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig20",category:"IT Glue",question:"File sharing is documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig21",category:"IT Glue",question:"Fill out company home page",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig22",category:"IT Glue",question:"ISP information is documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig23",category:"IT Glue",question:"Network diagrams are documented - if complex network",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig24",category:"IT Glue",question:"Printing is documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig25",category:"IT Glue",question:"Servers are documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ig26",category:"IT Glue",question:"Voice systems are documented",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"nw1",category:"Network",question:"Is the network protected by an InfoTank-Supported Sonicwall?",standard:"Network gear supported/updated; configs backed up; changes documented.",weight:1,criticality:"Medium",remedType:"External"},
   {id:"nw2",category:"Network",question:"Are all firewall configurations backed up?",standard:"Supported firewall; current firmware; secure remote access; rules reviewed quarterly.",weight:2,criticality:"High",remedType:"Internal"},
   {id:"nw3",category:"Network",question:"Does the firewall have the latest firmware and security license enabled?",standard:"Supported firewall; current firmware; secure remote access; rules reviewed quarterly.",weight:1,criticality:"Medium",remedType:"Internal"},
@@ -126,8 +126,8 @@ const DEFAULT_CATALOG = [
   {id:"nw20",category:"Network",question:"When is next password reset - All network equipment",standard:"Network gear supported/updated; configs backed up; changes documented.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"pw1",category:"Passwords",question:"Archive old passwords",standard:"Password policy ΓëÑ12 chars; complexity on; lockout/throttle enabled; SSPR configured.",weight:2,criticality:"High",remedType:"Internal"},
   {id:"pw2",category:"Passwords",question:"Confirm that all admin passwords have been changed since we took over",standard:"No standard users have local admin; privileged roles minimized and reviewed monthly.",weight:2,criticality:"Critical",remedType:"Internal"},
-  {id:"ph1",category:"Physical Checks",question:"Conduct an inventory of the workstations, make sure they are labeled and named properly",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"ph2",category:"Physical Checks",question:"Photos of the server/network room have been taken and uploaded to ITG",standard:"Documentation current (Γëñ90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ph1",category:"Physical Checks",question:"Conduct an inventory of the workstations, make sure they are labeled and named properly",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
+  {id:"ph2",category:"Physical Checks",question:"Photos of the server/network room have been taken and uploaded to ITG",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"ph3",category:"Physical Checks",question:"Confirm all of the server/network room data cabling neatly cable managed",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"ph4",category:"Physical Checks",question:"Confirm that server/network room is properly cooled",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"External"},
   {id:"pm1",category:"Power Management",question:"Check that all UPS devices functioning normally with all lights green",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
@@ -213,13 +213,13 @@ function gradeColor(g){return g==="A"?T.ok:g==="B"?T.accent:g==="C"?T.warn:T.err
 function fmtTime(iso){if(!iso)return"";const d=new Date(iso);return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})+" "+d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});}
 function fmtDate(iso){if(!iso)return"Never";return new Date(iso).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});}
 
-// Due/Overdue: new clients (no assessments) ΓåÆ due immediately, overdue after 1 month
-// Existing clients ΓåÆ due at 11 months, overdue at 12 months
+// Due/Overdue: new clients (no assessments) → due immediately, overdue after 1 month
+// Existing clients → due at 11 months, overdue at 12 months
 function getAssessmentStatus(clientName,assessments,clientCreatedAt){
   const hist=assessments[clientName]||[];
   const submitted=hist.filter(a=>a.submitted);
   if(submitted.length===0){
-    // New or never assessed ΓÇö use client creation date
+    // New or never assessed — use client creation date
     const created=clientCreatedAt?new Date(clientCreatedAt):new Date(Date.now()-40*24*60*60*1000);
     const monthsOld=(Date.now()-created.getTime())/(1000*60*60*24*30);
     if(monthsOld>1)return"overdue";
@@ -247,7 +247,7 @@ function CritBadge({kind}){
 }
 function TypeBadge({t}){
   const ext=t==="External";
-  return <span style={{fontFamily:MONO,fontSize:10,fontWeight:600,letterSpacing:0.4,textTransform:"uppercase",padding:"2px 6px",borderRadius:4,background:ext?T.purpleBg:T.accentBg,color:ext?T.purple:T.accentInk,whiteSpace:"nowrap",border:`1px solid ${ext?T.purpleBorder:T.border}`}}>{t||"ΓÇö"}</span>;
+  return <span style={{fontFamily:MONO,fontSize:10,fontWeight:600,letterSpacing:0.4,textTransform:"uppercase",padding:"2px 6px",borderRadius:4,background:ext?T.purpleBg:T.accentBg,color:ext?T.purple:T.accentInk,whiteSpace:"nowrap",border:`1px solid ${ext?T.purpleBorder:T.border}`}}>{t||"—"}</span>;
 }
 function OnsiteBadge(){
   return <span style={{fontFamily:MONO,fontSize:10,fontWeight:600,letterSpacing:0.4,textTransform:"uppercase",padding:"2px 6px",borderRadius:4,background:"#FFF7E6",color:"#B45309",whiteSpace:"nowrap",border:"1px solid #FCD9A4"}}>Onsite</span>;
@@ -275,7 +275,7 @@ function ArchiveModal({item,onConfirm,onCancel}){
         <div style={{fontFamily:FONT,fontWeight:700,fontSize:18,color:T.ink,marginBottom:4}}>Archive Finding</div>
         <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginBottom:6}}><strong>{item.client}</strong> ┬╖ {item.question}</div>
         <div style={{fontFamily:FONT,fontSize:12,color:T.warn,marginBottom:16,padding:"8px 12px",background:T.warnBg,borderRadius:8}}>This item stays on the score but disappears from the work queue. A note is required.</div>
-        <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="Why is this being archived? (e.g. Client declined ΓÇö budget constraint)" rows={3}
+        <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="Why is this being archived? (e.g. Client declined — budget constraint)" rows={3}
           style={{width:"100%",fontFamily:FONT,fontSize:14,color:T.ink,border:`1.5px solid ${note.trim().length>5?T.ok:T.border}`,borderRadius:8,padding:"10px 12px",resize:"none",outline:"none",boxSizing:"border-box",marginBottom:16}}/>
         <div style={{display:"flex",gap:10}}>
           <button onClick={onCancel} style={{flex:1,padding:"10px 0",background:"white",border:`1px solid ${T.border}`,borderRadius:8,cursor:"pointer",fontFamily:FONT,fontWeight:600,fontSize:14,color:T.muted}}>Cancel</button>
@@ -305,7 +305,7 @@ function LoginScreen({onLogin,error}){
         {error&&<div style={{background:"#FEF2F2",border:"1px solid #FCA5A5",borderRadius:8,padding:"10px 14px",marginBottom:16,fontFamily:"'Geist',sans-serif",fontSize:13,color:"#B91C1C"}}>{error}</div>}
         <button onClick={handleLogin} disabled={loading} style={{width:"100%",padding:"13px 0",background:loading?"#e2e8f0":"#0B1729",color:loading?"#64748B":"white",border:"none",borderRadius:10,cursor:loading?"default":"pointer",fontFamily:"'Geist',sans-serif",fontWeight:700,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
           <svg width="20" height="20" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg>
-          {loading?"Signing inΓÇª":"Sign in with Microsoft"}
+          {loading?"Signing in…":"Sign in with Microsoft"}
         </button>
       </div>
     </div>
@@ -417,12 +417,12 @@ export default function App(){
   const handleSignOut=()=>{msalInstance.logoutRedirect();setUser(null);};
 
   if(authState==="loading")return(
-    <div style={{minHeight:"100vh",background:"#0B1729",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif",color:"#94A3B8",fontSize:14}}>LoadingΓÇª</div>
+    <div style={{minHeight:"100vh",background:"#0B1729",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif",color:"#94A3B8",fontSize:14}}>Loading…</div>
   );
   if(authState==="loggedOut")return <LoginScreen onLogin={()=>setAuthState("loggedIn")}/>;
   if(!dataLoaded)return(
     <div style={{minHeight:"100vh",background:"#F4F5F7",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif",color:"#64748B",fontSize:14}}>
-      {dataError?`Error: ${dataError} ΓÇö check Railway API connection`:"Loading dataΓÇª"}
+      {dataError?`Error: ${dataError} — check Railway API connection`:"Loading data…"}
     </div>
   );
 
@@ -551,7 +551,7 @@ function HomeView({clients,clientMeta,assessments,catalog,archived,isMobile,onSt
               </div>
               <div style={{fontFamily:MONO,fontSize:11,color:T.muted}}>{s.pct}% ┬╖ {fmtDate(s.date)}{s.inProg&&<span style={{color:T.purple,fontWeight:700}}> ┬╖ IN PROGRESS</span>}</div>
             </>
-          ):<div style={{fontFamily:FONT,fontSize:12,color:T.muted}}>{s.inProg?"Assessment in progress ΓÇö not yet submitted":"No assessment yet"}</div>}
+          ):<div style={{fontFamily:FONT,fontSize:12,color:T.muted}}>{s.inProg?"Assessment in progress — not yet submitted":"No assessment yet"}</div>}
         </div>
         <div style={{display:"flex",borderTop:`1px solid ${T.border}`}}>
           <button onClick={()=>onStart(s.client)} style={{flex:1,padding:"11px 0",background:T.ok,border:"none",cursor:"pointer",fontFamily:FONT,fontSize:13,fontWeight:700,color:"#fff",borderRadius:s.pct?"0 0 0 12px":"0 0 12px 12px"}}>
@@ -568,7 +568,7 @@ function HomeView({clients,clientMeta,assessments,catalog,archived,isMobile,onSt
       {!isMobile&&<div style={{marginBottom:24}}><Eyebrow>{today}</Eyebrow><h1 style={{fontFamily:FONT,fontWeight:600,fontSize:28,color:T.ink,margin:"4px 0 0",letterSpacing:-0.5}}>Good morning.</h1></div>}
       {isMobile&&<div style={{padding:"16px 0 12px"}}><div style={{fontFamily:MONO,fontSize:10,color:T.muted,letterSpacing:0.5,textTransform:"uppercase",marginBottom:4}}>{today}</div><div style={{fontFamily:FONT,fontWeight:700,fontSize:24,color:T.ink}}>Good morning.</div></div>}
 
-      {/* KPI cards ΓÇö clickable filters */}
+      {/* KPI cards — clickable filters */}
       <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(3,1fr)":"repeat(5,1fr)",gap:10,marginBottom:20}}>
         {kpis.map(k=>{
           const active=activeFilter===k.id||(k.id==="all"&&!activeFilter);
@@ -753,7 +753,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
 
   const TechSelect=({qid,value})=>(
     <select value={value||""} onChange={e=>setResp(qid,"assessor",e.target.value)} style={{fontFamily:FONT,fontSize:12,color:T.ink,border:`1px solid ${T.border}`,borderRadius:6,padding:"5px 8px",background:"white",cursor:"pointer",width:"100%"}}>
-      <option value="">ΓÇö Assign assessor ΓÇö</option>
+      <option value="">— Assign assessor —</option>
       {techs.map(t=><option key={t} value={t}>{t}</option>)}
     </select>
   );
@@ -764,7 +764,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
   const SubmitBanner=()=>(
     <div style={{background:submitted?T.okBg:T.navy,border:`1px solid ${submitted?T.okBorder:T.navyEdge}`,borderRadius:10,padding:"12px 16px",marginBottom:16,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
       {submitted?(
-        <div style={{fontFamily:FONT,fontSize:14,color:T.ok,fontWeight:600}}>Γ£ô Assessment submitted successfully</div>
+        <div style={{fontFamily:FONT,fontSize:14,color:T.ok,fontWeight:600}}>✓ Assessment submitted successfully</div>
       ):(
         <>
           <div>
@@ -783,7 +783,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
       return(
         <div style={{padding:"0 16px"}}>
           <div style={{display:"flex",alignItems:"center",gap:12,padding:"12px 0 14px"}}>
-            <button onClick={()=>setMobileDetail(false)} style={{background:"transparent",border:"none",cursor:"pointer",color:T.accent,fontFamily:FONT,fontWeight:600,fontSize:14,padding:0}}>ΓÇ╣ Back</button>
+            <button onClick={()=>setMobileDetail(false)} style={{background:"transparent",border:"none",cursor:"pointer",color:T.accent,fontFamily:FONT,fontWeight:600,fontSize:14,padding:0}}>› Back</button>
             <span style={{fontFamily:MONO,fontSize:10,color:T.muted}}>{answered}/{effectiveCatalog.length}</span>
           </div>
           <SubmitBanner/>
@@ -803,16 +803,16 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
           {activeR.answeredAt&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginBottom:10}}>ANSWERED ┬╖ {fmtTime(activeR.answeredAt)}</div>}
           <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:"12px 14px",marginBottom:10}}>
             <Eyebrow>Notes</Eyebrow>
-            <textarea value={activeR.notes||""} onChange={e=>setResp(activeQ.id,"notes",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="Add contextΓÇª" rows={3} style={{width:"100%",fontFamily:FONT,fontSize:14,color:T.ink,border:"none",outline:"none",resize:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0",marginTop:4}}/>
+            <textarea value={activeR.notes||""} onChange={e=>setResp(activeQ.id,"notes",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="Add context…" rows={3} style={{width:"100%",fontFamily:FONT,fontSize:14,color:T.ink,border:"none",outline:"none",resize:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0",marginTop:4}}/>
           </div>
           <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:"12px 14px",marginBottom:14}}>
             <Eyebrow>Evidence Link</Eyebrow>
-            <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="https://ΓÇª" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
+            <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
           </div>
           <div style={{display:"flex",gap:10}}>
             {(()=>{const idx=filteredQ.findIndex(q=>q.id===activeQId);const prev=filteredQ[idx-1];const next=filteredQ[idx+1];return(<>
-              <button onClick={()=>prev&&setActiveQId(prev.id)} disabled={!prev} style={{flex:1,padding:"12px 0",background:prev?T.card:"transparent",border:`1px solid ${T.border}`,borderRadius:10,cursor:prev?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:14,color:prev?T.ink:T.muted,opacity:prev?1:0.4}}>ΓÇ╣ Prev</button>
-              <button onClick={()=>next&&setActiveQId(next.id)} disabled={!next} style={{flex:1,padding:"12px 0",background:next?T.navy:T.card,border:`1px solid ${next?T.navy:T.border}`,borderRadius:10,cursor:next?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:14,color:next?"#fff":T.muted,opacity:next?1:0.4}}>Next ΓÇ║</button>
+              <button onClick={()=>prev&&setActiveQId(prev.id)} disabled={!prev} style={{flex:1,padding:"12px 0",background:prev?T.card:"transparent",border:`1px solid ${T.border}`,borderRadius:10,cursor:prev?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:14,color:prev?T.ink:T.muted,opacity:prev?1:0.4}}>› Prev</button>
+              <button onClick={()=>next&&setActiveQId(next.id)} disabled={!next} style={{flex:1,padding:"12px 0",background:next?T.navy:T.card,border:`1px solid ${next?T.navy:T.border}`,borderRadius:10,cursor:next?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:14,color:next?"#fff":T.muted,opacity:next?1:0.4}}>Next ‹</button>
             </>);})()}
           </div>
         </div>
@@ -918,7 +918,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
           <div style={{padding:"10px 12px",borderBottom:`1px solid ${T.border}`}}>
             <div style={{display:"flex",alignItems:"center",gap:7,background:T.bg,borderRadius:7,padding:"6px 10px",border:`1px solid ${T.border}`}}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.muted} strokeWidth="2"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2"/></svg>
-              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search questionsΓÇª" style={{border:"none",background:"transparent",fontFamily:FONT,fontSize:13,color:T.ink,outline:"none",width:"100%"}}/>
+              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search questions…" style={{border:"none",background:"transparent",fontFamily:FONT,fontSize:13,color:T.ink,outline:"none",width:"100%"}}/>
             </div>
           </div>
           <div style={{flex:1,overflowY:"auto"}}>
@@ -958,7 +958,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
               <p style={{fontFamily:FONT,fontSize:13,color:T.muted,lineHeight:1.55,marginBottom:16}}>{activeQ.standard}</p>
               <div style={{marginBottom:14}}><Eyebrow>Assessor</Eyebrow>
                 <select value={activeR.assessor||""} onChange={e=>setResp(activeQ.id,"assessor",e.target.value)} style={{fontFamily:FONT,fontSize:13,color:T.ink,border:`1px solid ${T.border}`,borderRadius:7,padding:"6px 10px",background:"white",cursor:"pointer",width:"100%"}}>
-                  <option value="">ΓÇö Assign assessor ΓÇö</option>
+                  <option value="">— Assign assessor —</option>
                   {techs.map(t=><option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
@@ -968,11 +968,11 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
               {activeR.answeredAt&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginBottom:12}}>ANSWERED ┬╖ {fmtTime(activeR.answeredAt)}</div>}
               <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:"11px 13px",marginBottom:10}}>
                 <Eyebrow>Notes</Eyebrow>
-                <textarea value={activeR.notes||""} onChange={e=>setResp(activeQ.id,"notes",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="Add context, findings, or observationsΓÇª" rows={4} style={{width:"100%",fontFamily:FONT,fontSize:13,color:T.ink,lineHeight:1.5,border:"none",outline:"none",resize:"vertical",background:"transparent",boxSizing:"border-box",padding:"4px 0",marginTop:4}}/>
+                <textarea value={activeR.notes||""} onChange={e=>setResp(activeQ.id,"notes",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="Add context, findings, or observations…" rows={4} style={{width:"100%",fontFamily:FONT,fontSize:13,color:T.ink,lineHeight:1.5,border:"none",outline:"none",resize:"vertical",background:"transparent",boxSizing:"border-box",padding:"4px 0",marginTop:4}}/>
               </div>
               <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:"11px 13px"}}>
                 <Eyebrow>Evidence Link</Eyebrow>
-                <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="https://ΓÇª" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
+                <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
               </div>
               {!submitted&&<button onClick={handleSubmit} style={{width:"100%",marginTop:16,background:T.ok,color:"white",border:"none",borderRadius:9,padding:"12px 0",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:14}}>Submit Assessment</button>}
               {submitted&&<div style={{marginTop:16,padding:"12px 16px",background:T.okBg,border:`1px solid ${T.okBorder}`,borderRadius:9,fontFamily:FONT,fontSize:14,color:T.ok,fontWeight:600}}>✓ Assessment submitted successfully</div>}
@@ -1041,7 +1041,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
           {clients.map(c=><option key={c}>{c}</option>)}
         </select>
         <button onClick={handleScreenshot} disabled={!last||capturing} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",background:last?T.navy:"#e2e8f0",color:last?"#E8EDF5":T.muted,border:"none",borderRadius:8,cursor:last?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:12,whiteSpace:"nowrap",flexShrink:0}}>
-          {capturing?"CapturingΓÇª":"≡ƒôï Download for PowerPoint"}
+          {capturing?"Capturing…":"≡ƒôï Download for PowerPoint"}
         </button>
       </div>
       {!last?(
@@ -1067,7 +1067,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
                   </div>
                   <div style={{fontFamily:FONT,fontSize:12,color:T.muted,marginTop:2}}>Overall IT Maturity</div>
                   {pScore&&<div style={{display:"inline-flex",alignItems:"center",gap:4,marginTop:8,padding:"3px 8px",borderRadius:999,background:score.pct>=pScore.pct?T.okBg:T.errBg,color:score.pct>=pScore.pct?T.ok:T.err,fontFamily:MONO,fontSize:10,fontWeight:600}}>
-                    {score.pct>=pScore.pct?"Γû▓":"Γû╝"} {Math.abs(score.pct-pScore.pct)} PTS VS. LAST
+                    {score.pct>=pScore.pct?"↑":"↓"} {Math.abs(score.pct-pScore.pct)} PTS VS. LAST
                   </div>}
                 </div>
               </div>
@@ -1120,7 +1120,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
                         <td style={{padding:"11px 14px",color:T.ink2,whiteSpace:"nowrap"}}>{r.category}</td>
                         <td style={{padding:"11px 14px",color:T.ink,maxWidth:280}}>{r.question}</td>
                         <td style={{padding:"11px 14px"}}><span style={{fontFamily:MONO,fontSize:11,fontWeight:600,color:r.status==="Missing"?T.err:T.warn}}>{r.status}</span></td>
-                        <td style={{padding:"11px 14px",color:T.muted,fontSize:12,maxWidth:180}}>{r.notes||"ΓÇö"}</td>
+                        <td style={{padding:"11px 14px",color:T.muted,fontSize:12,maxWidth:180}}>{r.notes||"—"}</td>
                       </tr>
                     ))}</tbody>
                   </table>
@@ -1245,12 +1245,12 @@ function RemediationView({clients,assessments,catalog,techs,archived,isMobile,on
               </div>
             </div>
           ))}
-          {filtered.length===0&&<div style={{textAlign:"center",padding:48,color:T.muted,fontFamily:FONT,fontSize:15}}>≡ƒÄë {showArchived?"No archived items":"No active findings ΓÇö great work!"}</div>}
+          {filtered.length===0&&<div style={{textAlign:"center",padding:48,color:T.muted,fontFamily:FONT,fontSize:15}}>≡ƒÄë {showArchived?"No archived items":"No active findings — great work!"}</div>}
         </div>
       ):(
         <div style={{background:T.card,borderRadius:12,border:`1px solid ${T.border}`,overflow:"hidden"}}>
           {filtered.length===0?(
-            <div style={{textAlign:"center",padding:60,color:T.muted,fontFamily:FONT,fontSize:15}}>≡ƒÄë {showArchived?"No archived items":"No active findings ΓÇö great work!"}</div>
+            <div style={{textAlign:"center",padding:60,color:T.muted,fontFamily:FONT,fontSize:15}}>≡ƒÄë {showArchived?"No archived items":"No active findings — great work!"}</div>
           ):(
             <table style={{width:"100%",borderCollapse:"collapse",fontFamily:FONT,fontSize:13}}>
               <thead>
@@ -1261,7 +1261,7 @@ function RemediationView({clients,assessments,catalog,techs,archived,isMobile,on
               <tbody>
                 {filtered.map((item,i)=>(
                   <tr key={i} style={{borderBottom:i<filtered.length-1?`1px solid ${T.border}`:"none",opacity:item.archived?0.7:1,background:item.archived?"#FFFBF5":undefined}}>
-                    <td style={{padding:"10px 12px"}}>{item.priority?<PriorityPill p={item.priority}/>:<span style={{color:T.muted,fontFamily:MONO,fontSize:11}}>ΓÇö</span>}</td>
+                    <td style={{padding:"10px 12px"}}>{item.priority?<PriorityPill p={item.priority}/>:<span style={{color:T.muted,fontFamily:MONO,fontSize:11}}>—</span>}</td>
                     <td style={{padding:"10px 12px",fontWeight:600,color:T.ink,whiteSpace:"nowrap"}}>{item.client}</td>
                     <td style={{padding:"10px 12px",color:T.muted,whiteSpace:"nowrap",fontSize:12}}>{item.category}</td>
                     <td style={{padding:"10px 12px",color:T.ink,maxWidth:260}}>
@@ -1270,8 +1270,8 @@ function RemediationView({clients,assessments,catalog,techs,archived,isMobile,on
                     </td>
                     <td style={{padding:"10px 12px",whiteSpace:"nowrap"}}><span style={{fontFamily:MONO,fontSize:11,fontWeight:700,color:statusColor(item.status)}}>{item.status}</span></td>
                     <td style={{padding:"10px 12px"}}><TypeBadge t={item.remedType}/></td>
-                    <td style={{padding:"10px 12px",color:T.muted,fontSize:12,whiteSpace:"nowrap"}}>{item.assessor||"ΓÇö"}</td>
-                    <td style={{padding:"10px 12px",color:T.muted,fontSize:12,maxWidth:160}}>{item.notes||"ΓÇö"}</td>
+                    <td style={{padding:"10px 12px",color:T.muted,fontSize:12,whiteSpace:"nowrap"}}>{item.assessor||"—"}</td>
+                    <td style={{padding:"10px 12px",color:T.muted,fontSize:12,maxWidth:160}}>{item.notes||"—"}</td>
                     <td style={{padding:"10px 12px",whiteSpace:"nowrap"}}>
                       <div style={{display:"flex",gap:6}}>
                         <button onClick={()=>onNavigate(item.client)} style={{padding:"5px 10px",background:T.accentBg,color:T.accentInk,border:`1px solid ${T.border}`,borderRadius:6,cursor:"pointer",fontFamily:FONT,fontWeight:600,fontSize:11}}>Open</button>
@@ -1349,8 +1349,8 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile,onSaveTechs})
               <tbody>{stats.map((s,i)=>(
                 <tr key={s.tech} style={{borderBottom:i<stats.length-1?`1px solid ${T.border}`:"none"}}>
                   <td style={{padding:"11px 14px",fontWeight:600,color:T.ink,whiteSpace:"nowrap"}}>{s.tech}</td>
-                  {activeClients.map(c=><td key={c} style={{padding:"11px 11px",textAlign:"center",fontFamily:MONO,fontSize:13,color:s.perClient[c]?T.accent:T.muted}}>{s.perClient[c]||"ΓÇö"}</td>)}
-                  <td style={{padding:"11px 11px",textAlign:"center",fontFamily:MONO,fontSize:14,fontWeight:700,color:T.accent}}>{s.total||"ΓÇö"}</td>
+                  {activeClients.map(c=><td key={c} style={{padding:"11px 11px",textAlign:"center",fontFamily:MONO,fontSize:13,color:s.perClient[c]?T.accent:T.muted}}>{s.perClient[c]||"—"}</td>)}
+                  <td style={{padding:"11px 11px",textAlign:"center",fontFamily:MONO,fontSize:14,fontWeight:700,color:T.accent}}>{s.total||"—"}</td>
                 </tr>
               ))}</tbody>
             </table>
@@ -1363,7 +1363,7 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile,onSaveTechs})
           {techDirty&&<button onClick={()=>{onSaveTechs(techList);setTechDirty(false);}} style={{background:T.ok,color:"white",border:"none",borderRadius:8,padding:"9px 18px",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:13}}>Save Changes</button>}
         </div>
         <div style={{display:"flex",gap:8,marginBottom:14,maxWidth:480}}>
-          <input value={newTech} onChange={e=>setNewTech(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTech()} placeholder="Add technician nameΓÇª" style={{flex:1,border:`1px solid ${T.border}`,borderRadius:8,padding:"9px 13px",fontSize:14,fontFamily:FONT}}/>
+          <input value={newTech} onChange={e=>setNewTech(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTech()} placeholder="Add technician name…" style={{flex:1,border:`1px solid ${T.border}`,borderRadius:8,padding:"9px 13px",fontSize:14,fontFamily:FONT}}/>
           <button onClick={addTech} style={{background:T.navy,color:"white",border:"none",borderRadius:8,padding:"9px 18px",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:14}}>Add</button>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:8,maxWidth:800}}>
@@ -1490,7 +1490,7 @@ function ClientsView({clients,clientMeta,assessments,catalog,isMobile,onSave,onS
         <div style={{fontFamily:FONT,fontWeight:700,fontSize:20,color:T.ink}}>{items.length} Clients</div>
       </div>
       <div style={{display:"flex",gap:8,marginBottom:16}}>
-        <input value={newC} onChange={e=>setNewC(e.target.value)} onKeyDown={e=>e.key==="Enter"&&add()} placeholder="Add new clientΓÇª" style={{flex:1,border:`1px solid ${T.border}`,borderRadius:8,padding:"10px 13px",fontSize:14,fontFamily:FONT}}/>
+        <input value={newC} onChange={e=>setNewC(e.target.value)} onKeyDown={e=>e.key==="Enter"&&add()} placeholder="Add new client…" style={{flex:1,border:`1px solid ${T.border}`,borderRadius:8,padding:"10px 13px",fontSize:14,fontFamily:FONT}}/>
         <button onClick={add} style={{background:T.navy,color:"white",border:"none",borderRadius:8,padding:"10px 16px",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:14}}>Add</button>
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
@@ -1498,7 +1498,7 @@ function ClientsView({clients,clientMeta,assessments,catalog,isMobile,onSave,onS
           <div key={s.client} style={{background:T.card,borderRadius:12,border:`1px solid ${s.status==="overdue"?T.errBorder:s.status==="due"?T.warnBorder:T.border}`,overflow:"hidden"}}>
             <div style={{padding:"13px 15px",display:"flex",alignItems:"center",gap:12}}>
               <div style={{width:38,height:38,borderRadius:9,background:s.grade?gradeColor(s.grade)+"22":T.bg,display:"grid",placeItems:"center",flexShrink:0}}>
-                <span style={{fontFamily:FONT,fontWeight:800,fontSize:17,color:s.grade?gradeColor(s.grade):T.muted}}>{s.grade||"ΓÇö"}</span>
+                <span style={{fontFamily:FONT,fontWeight:800,fontSize:17,color:s.grade?gradeColor(s.grade):T.muted}}>{s.grade||"—"}</span>
               </div>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontFamily:FONT,fontWeight:600,fontSize:14,color:T.ink}}>{s.client}</div>
