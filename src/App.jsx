@@ -327,6 +327,15 @@ export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [dataError, setDataError] = useState(null);
   const [view, setView] = useState("home");
+  const [catalogDirty, setCatalogDirty] = useState(false);
+
+  const safeSetView = (newView) => {
+    if (catalogDirty && view === "manage") {
+      if (!window.confirm("You have unsaved changes to the Question Library. Leave without saving?")) return;
+    }
+    setCatalogDirty(false);
+    setView(newView);
+  };
   const [activeClient, setActiveClient] = useState(null);
   const [savedMsg, setSavedMsg] = useState("");
   const isMobile = useIsMobile();
@@ -454,7 +463,7 @@ export default function App() {
               <div style={{ display: "flex", gap: 2 }}>
                 {navItems.map(n => {
                   const active = view === n.id; return (
-                    <button key={n.id} onClick={() => setView(n.id)} style={{ padding: "8px 13px", borderRadius: 6, background: active ? "rgba(79,179,199,0.14)" : "transparent", color: active ? "#fff" : "#94A3B8", border: "none", cursor: "pointer", fontFamily: FONT, fontSize: 13, fontWeight: active ? 600 : 500, position: "relative" }}>
+                    <button key={n.id} onClick={() => safesetView(n.id)} style={{ padding: "8px 13px", borderRadius: 6, background: active ? "rgba(79,179,199,0.14)" : "transparent", color: active ? "#fff" : "#94A3B8", border: "none", cursor: "pointer", fontFamily: FONT, fontSize: 13, fontWeight: active ? 600 : 500, position: "relative" }}>
                       {n.label}{active && <div style={{ position: "absolute", left: 13, right: 13, bottom: -1, height: 2, background: T.accentGlow }} />}
                     </button>
                   );
@@ -490,14 +499,13 @@ export default function App() {
         {view === "assess" && <AssessView clients={clients} catalog={catalog} assessments={assessments} techs={techs} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} onSave={saveAssessments} user={user} />}
         {view === "dashboard" && <DashboardView clients={clients} assessments={assessments} catalog={catalog} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} user={user} onSave={saveAssessments} />}        {view === "remediation" && <RemediationView clients={clients} assessments={assessments} catalog={catalog} techs={techs} archived={archived} isMobile={isMobile} onArchive={archiveItem} onUnarchive={unarchiveItem} isArchived={isArchived} onNavigate={c => { setActiveClient(c); setView("assess"); }} />}
         {view === "assessors" && isManager && <AssessorsView assessments={assessments} catalog={catalog} techs={techs} clients={clients} isMobile={isMobile} onSaveTechs={async t => { setTechs(t); await saveKV("techs", t); }} />}
-        {view === "manage" && isManager && <ManageView catalog={catalog} techs={techs} isMobile={isMobile} onSave={async c => { setCatalog(c); await saveKV("catalog", c); }} />}
-        {view === "clients" && <ClientsView clients={clients} clientMeta={clientMeta} assessments={assessments} catalog={catalog} isMobile={isMobile} onSave={async (c, m) => { setClients(c); setClientMeta(m); await saveKV("clients", c); await saveKV("clientMeta", m); }} onStart={c => { setActiveClient(c); setView("assess"); }} onDashboard={c => { setActiveClient(c); setView("dashboard"); }} />}
+        {view === "manage" && isManager && <ManageView catalog={catalog} techs={techs} isMobile={isMobile} onSave={async c => { setCatalog(c); await saveKV("catalog", c); setCatalogDirty(false); }} onDirty={() => setCatalogDirty(true)} />}        {view === "clients" && <ClientsView clients={clients} clientMeta={clientMeta} assessments={assessments} catalog={catalog} isMobile={isMobile} onSave={async (c, m) => { setClients(c); setClientMeta(m); await saveKV("clients", c); await saveKV("clientMeta", m); }} onStart={c => { setActiveClient(c); setView("assess"); }} onDashboard={c => { setActiveClient(c); setView("dashboard"); }} />}
       </div>
       {isMobile && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: T.navy, borderTop: `1px solid ${T.navyEdge}`, display: "flex", zIndex: 200, paddingBottom: "env(safe-area-inset-bottom,0px)" }}>
           {mobileNavItems.map(n => {
             const active = view === n.id; return (
-              <button key={n.id} onClick={() => setView(n.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 2px 8px", background: "transparent", border: "none", cursor: "pointer", color: active ? T.accentGlow : "#64748B", position: "relative" }}>
+              <button key={n.id} onClick={() => safesetView(n.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 2px 8px", background: "transparent", border: "none", cursor: "pointer", color: active ? T.accentGlow : "#64748B", position: "relative" }}>
                 <span style={{ fontSize: 18 }}>{n.icon}</span>
                 <span style={{ fontFamily: FONT, fontSize: 9, fontWeight: active ? 700 : 500 }}>{n.label}</span>
                 {active && <div style={{ position: "absolute", top: 0, left: "10%", right: "10%", height: 2, background: T.accentGlow, borderRadius: 1 }} />}
@@ -1420,7 +1428,7 @@ function AssessorsView({ assessments, catalog, techs, clients, isMobile, onSaveT
 }
 
 // ─── MANAGE VIEW ──────────────────────────────────────────────────────────────
-function ManageView({ catalog, techs, isMobile, onSave }) {
+function ManageView({ catalog, techs, isMobile, onSave, onDirty }) {
   const [items, setItems] = useState(catalog);
   const [editId, setEditId] = useState(null);
   const [filter, setFilter] = useState("All");
@@ -1428,13 +1436,26 @@ function ManageView({ catalog, techs, isMobile, onSave }) {
   const [adding, setAdding] = useState(false);
   const [newQ, setNewQ] = useState({ category: "", question: "", standard: "", weight: 1, criticality: "Medium", remedType: "Internal", defaultAssessor: "" });
   const categories = [...new Set(items.map(q => q.category))];
-  const update = (id, f, v) => { setItems(p => p.map(q => q.id === id ? { ...q, [f]: v } : q)); setDirty(true); };
-  const remove = id => { setItems(p => p.filter(q => q.id !== id)); setDirty(true); };
-  const addQ = () => { if (!newQ.category || !newQ.question) return; setItems(p => [...p, { ...newQ, id: "custom_" + Date.now(), weight: Number(newQ.weight) }]); setNewQ({ category: "", question: "", standard: "", weight: 1, criticality: "Medium", remedType: "Internal", defaultAssessor: "" }); setAdding(false); setDirty(true); };
+  const update = (id, f, v) => { setItems(p => p.map(q => q.id === id ? { ...q, [f]: v } : q)); setDirty(true); onDirty(); };
+  const remove = id => { setItems(p => p.filter(q => q.id !== id)); setDirty(true); onDirty(); };
+  const addQ = () => { if (!newQ.category || !newQ.question) return; setItems(p => [...p, { ...newQ, id: "custom_" + Date.now(), weight: Number(newQ.weight) }]); setNewQ({ category: "", question: "", standard: "", weight: 1, criticality: "Medium", remedType: "Internal", defaultAssessor: "" }); setAdding(false); setDirty(true); onDirty(); };
   const filtered = items.filter(q => filter === "All" || q.category === filter);
   const pad = isMobile ? "16px" : "0";
   const [aiReview, setAiReview] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
+
+  useEffect(() => { setItems(catalog); }, [catalog]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (dirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [dirty]);
 
   const runAiReview = async () => {
     setAiLoading(true);
