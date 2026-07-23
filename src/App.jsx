@@ -1439,6 +1439,10 @@ function ManageView({catalog,techs,isMobile,onSave,onDirty}){
   const addQ=()=>{if(!newQ.category||!newQ.question)return;setItems(p=>[...p,{...newQ,id:"custom_"+Date.now(),weight:Number(newQ.weight)}]);setNewQ({category:"",question:"",standard:"",weight:1,criticality:"Medium",remedType:"Internal",defaultAssessor:""});setAdding(false);setDirty(true);onDirty();};
   const filtered=items.filter(q=>filter==="All"||q.category===filter);
   const pad=isMobile?"16px":"0";
+  const [aiReview,setAiReview]=useState(null);
+  const [aiLoading,setAiLoading]=useState(false);
+
+  useEffect(()=>{setItems(catalog);},[catalog]);
 
   useEffect(()=>{
     const handleBeforeUnload=(e)=>{
