@@ -940,7 +940,7 @@ function AssessView({ clients, catalog, assessments, techs, activeClient, setAct
               {statusFilters.length > 0 && <button onClick={() => setStatusFilters([])} style={{ padding: "4px 0", border: "none", background: "transparent", cursor: "pointer", fontFamily: FONT, fontSize: 11, color: T.muted, textAlign: "left" }}>Clear filters</button>}
             </div>
           </div>
-          <div style={{ flex: 1, overflowY: "auto", padding: "6px" }}>
+          <div style={{ flex: 2, overflowY: "auto", padding: "6px" }}>
             {[{ id: "all", label: "All Questions" }, ...categories.map(c => ({ id: c, label: c }))].map(cat => (
               <button key={cat.id} onClick={() => setActiveCategory(cat.id)} style={{ width: "100%", display: "flex", justifyContent: "space-between", padding: "6px 9px", borderRadius: 6, border: "none", cursor: "pointer", textAlign: "left", background: activeCategory === cat.id ? T.accentBg : "transparent", color: activeCategory === cat.id ? T.accentInk : T.ink2 }}>
                 <span style={{ fontFamily: FONT, fontSize: 12, fontWeight: activeCategory === cat.id ? 600 : 400, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cat.label}</span>
