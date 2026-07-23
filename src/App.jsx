@@ -925,7 +925,7 @@ function AssessView({ clients, catalog, assessments, techs, activeClient, setAct
               {intake.hasEntra && <span style={{ fontFamily: MONO, fontSize: 9, padding: "2px 5px", borderRadius: 4, background: T.accentBg, color: T.accentInk, fontWeight: 600 }}>ENTRA ID</span>}
             </div>}
           </div>
-          <div style={{ padding: "10px 14px", borderBottom: `1px solid ${T.border}`, flexShrink: 0 }}>
+          <div style={{ padding: "10px 14px", borderBottom: `1px solid ${T.border}`, flexShrink: 0, maxHeight: "30vh", overflowY: "auto" }}>
             <Eyebrow>Filter by Status</Eyebrow>
             <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 4 }}>
               {[...STATUSES, "Unanswered"].map(s => {
