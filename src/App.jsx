@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback, useRef } from "react";
+﻿import { useState, useEffect, useCallback, useRef, Fragment } from "react";
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
 
 // ─── MSAL CONFIG ─────────────────────────────────────────────────────────────
@@ -22,18 +22,23 @@ async function getToken() {
   const accounts = msalInstance.getAllAccounts();
   if (accounts.length === 0) throw new Error("Not signed in");
   try {
-    const resp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: accounts[0] });
+    const resp = await msalInstance.acquireTokenSilent({
+      ...loginRequest,
+      account: accounts[0],
+      forceRefresh: false
+    });
     return resp.idToken;
   } catch (err) {
-    if (err instanceof InteractionRequiredAuthError) {
-      await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
-    }
-    throw err;
+    console.error("Token error:", err.errorCode);
+    await msalInstance.clearCache();
+    await msalInstance.loginRedirect(loginRequest);
+    return;
   }
 }
 
 async function api(method, path, body) {
   const token = await getToken();
+  if (!token) throw new Error("redirecting");
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -371,6 +376,7 @@ export default function App(){
         setArchived(archivedRes.archived||{});
         setDataLoaded(true);
       }catch(err){
+        if(err.message==="redirecting")return;
         console.error("Load error:",err);
         setDataError(err.message);
         setDataLoaded(true);
@@ -477,8 +483,8 @@ export default function App(){
       )}
       <div style={{maxWidth:isMobile?"100%":1400,margin:"0 auto",padding:isMobile?"16px 0 80px":"28px 24px"}}>
         {view==="home"&&<HomeView clients={clients} clientMeta={clientMeta} assessments={assessments} catalog={catalog} archived={archived} isMobile={isMobile} onStart={c=>{setActiveClient(c);setView("assess");}} onDashboard={c=>{setActiveClient(c);setView("dashboard");}}/>}
-        {view==="assess"&&<AssessView clients={clients} catalog={catalog} assessments={assessments} techs={techs} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} onSave={saveAssessments}/>}
-        {view==="dashboard"&&<DashboardView clients={clients} assessments={assessments} catalog={catalog} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile}/>}
+        {view==="assess"&&<AssessView clients={clients} catalog={catalog} assessments={assessments} techs={techs} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} onSave={saveAssessments} user={user}/>}
+        {view==="dashboard"&&<DashboardView clients={clients} assessments={assessments} catalog={catalog} activeClient={activeClient} setActiveClient={setActiveClient} isMobile={isMobile} user={user} onSave={saveAssessments} user={user}/>}
         {view==="remediation"&&<RemediationView clients={clients} assessments={assessments} catalog={catalog} techs={techs} archived={archived} isMobile={isMobile} onArchive={archiveItem} onUnarchive={unarchiveItem} isArchived={isArchived} onNavigate={c=>{setActiveClient(c);setView("assess");}}/>}
         {view==="assessors"&&isManager&&<AssessorsView assessments={assessments} catalog={catalog} techs={techs} clients={clients} isMobile={isMobile} onSaveTechs={async t=>{setTechs(t);await saveKV("techs",t);}}/>}
         {view==="manage"&&isManager&&<ManageView catalog={catalog} techs={techs} isMobile={isMobile} onSave={async c=>{setCatalog(c);await saveKV("catalog",c);setCatalogDirty(false);}} onDirty={()=>setCatalogDirty(true)}/>}
@@ -641,7 +647,7 @@ function IntakeModal({onConfirm,onCancel}){
 }
 
 // ─── ASSESS VIEW ──────────────────────────────────────────────────────────────
-function AssessView({clients,catalog,assessments,techs,activeClient,setActiveClient,isMobile,onSave}){
+function AssessView({clients,catalog,assessments,techs,activeClient,setActiveClient,isMobile,onSave,user}){
   const [client,setClient]=useState(activeClient||clients[0]);
   const [responses,setResponses]=useState({});
   const [intake,setIntake]=useState(null);
@@ -693,7 +699,15 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
 
   const setResp=(id,field,val,noSave)=>{
     setResponses(prev=>{
-      const updated={...prev,[id]:{...(prev[id]||{}),[field]:val,...(field==="status"?{answeredAt:new Date().toISOString()}:{})}};
+      const existing=prev[id]||{};
+      const isNewStatus=field==="status";
+      const shouldAutoAssign=isNewStatus&&(!existing.assessor||!existing.status);
+      const updated={...prev,[id]:{
+        ...existing,
+        [field]:val,
+        ...(isNewStatus?{answeredAt:new Date().toISOString()}:{}),
+        ...(shouldAutoAssign&&user?.name?{assessor:user.name}:{})
+      }};
       if(!noSave)autoSave(updated,null,false);
       return updated;
     });
@@ -930,11 +944,14 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
             </div>
           </div>
           <div style={{flex:1,overflowY:"auto"}}>
-            {filteredQ.map(q=>{
+            {filteredQ.map((q,idx)=>{
               const r=responses[q.id]||{};const isActive=activeQId===q.id;
               const sc=r.status==="Complete"?T.ok:r.status==="Partial"?T.warn:r.status==="Missing"?T.err:r.status==="N/A"?T.na:"transparent";
+              const showHeader=idx===0||filteredQ[idx-1].category!==q.category;
               return(
-                <div key={q.id} onClick={()=>setActiveQId(q.id)} style={{display:"flex",gap:8,padding:"10px 12px 10px 10px",cursor:"pointer",borderLeft:`3px solid ${isActive?T.accent:sc}`,borderBottom:`1px solid ${T.border}`,background:isActive?"#fff":T.card}}>
+                <Fragment key={q.id}>
+                  {showHeader&&<div style={{padding:"6px 12px",background:T.navyAlt,borderBottom:`1px solid ${T.navyEdge}`}}><span style={{fontFamily:MONO,fontSize:10,fontWeight:700,color:T.accentGlow,letterSpacing:1,textTransform:"uppercase"}}>{q.category}</span></div>}
+                  <div onClick={()=>setActiveQId(q.id)} style={{display:"flex",gap:8,padding:"10px 12px 10px 10px",cursor:"pointer",borderLeft:`3px solid ${isActive?T.accent:sc}`,borderBottom:`1px solid ${T.border}`,background:isActive?T.accentBg:T.card,boxShadow:isActive?`inset 0 0 0 1px ${T.accent}20`:undefined}}>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{display:"flex",gap:5,marginBottom:3,alignItems:"center",flexWrap:"wrap"}}><CritBadge kind={q.criticality}/><TypeBadge t={q.remedType}/>{q.onsite&&<OnsiteBadge/>}</div>
                     <div style={{fontFamily:FONT,fontSize:12,color:T.ink,lineHeight:1.35,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{q.question}</div>
@@ -942,6 +959,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
                   </div>
                   {r.status&&<span style={{fontFamily:MONO,fontSize:10,color:sc,flexShrink:0,paddingTop:2,fontWeight:700}}>{r.status[0]}</span>}
                 </div>
+                </Fragment>
               );
             })}
           </div>
@@ -981,7 +999,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
               </div>
               <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:"11px 13px"}}>
                 <Eyebrow>Evidence Link</Eyebrow>
-                <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
+                <input value={activeR.evidence||""} onChange={e=>setResp(activeQ.id,"evidence",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} onKeyDown={e=>{if(e.key==="Tab"&&!e.shiftKey){const idx=filteredQ.findIndex(q=>q.id===activeQId);const next=filteredQ[idx+1];if(next){e.preventDefault();setActiveQId(next.id);}}}} placeholder="https://…" style={{width:"100%",fontFamily:MONO,fontSize:13,color:T.accentInk,border:"none",outline:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0"}}/>
               </div>
 
             </>
@@ -1006,7 +1024,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
 }
 
 // ─── DASHBOARD VIEW ───────────────────────────────────────────────────────────
-function DashboardView({clients,assessments,catalog,activeClient,setActiveClient,isMobile}){
+function DashboardView({clients,assessments,catalog,activeClient,setActiveClient,isMobile,user,onSave}){
   const [client,setClient]=useState(activeClient||clients[0]);
   const [capturing,setCapturing]=useState(false);
   const dashRef=useRef(null);
@@ -1064,6 +1082,13 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
         <button onClick={handleScreenshot} disabled={!last||capturing} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",background:last?T.navy:"#e2e8f0",color:last?"#E8EDF5":T.muted,border:"none",borderRadius:8,cursor:last?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:12,whiteSpace:"nowrap",flexShrink:0}}>
           {capturing?"Capturing…":"📋 Download for PowerPoint"}
         </button>
+        {user?.role==="manager"&&last&&<button onClick={()=>{
+          const hist=assessments[client]||[];
+          const updated=hist.map(a=>a._id===last._id?{...a,submitted:false}:a);
+          onSave({...assessments,[client]:updated});
+        }} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",background:T.warnBg,color:T.warn,border:`1px solid ${T.warnBorder}`,borderRadius:8,cursor:"pointer",fontFamily:FONT,fontWeight:600,fontSize:12,whiteSpace:"nowrap",flexShrink:0}}>
+          Unsubmit
+        </button>}
       </div>
       {!last?(
         <div style={{textAlign:"center",padding:60,color:T.muted,fontFamily:FONT,fontSize:15}}>No submitted assessment for {client} yet.</div>
@@ -1401,7 +1426,7 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile,onSaveTechs})
 }
 
 // ─── MANAGE VIEW ──────────────────────────────────────────────────────────────
-function ManageView({catalog,techs,isMobile,onSave}){
+function ManageView({catalog,techs,isMobile,onSave,onDirty}){
   const [items,setItems]=useState(catalog);
   const [editId,setEditId]=useState(null);
   const [filter,setFilter]=useState("All");
@@ -1409,11 +1434,35 @@ function ManageView({catalog,techs,isMobile,onSave}){
   const [adding,setAdding]=useState(false);
   const [newQ,setNewQ]=useState({category:"",question:"",standard:"",weight:1,criticality:"Medium",remedType:"Internal",defaultAssessor:""});
   const categories=[...new Set(items.map(q=>q.category))];
-  const update=(id,f,v)=>{setItems(p=>p.map(q=>q.id===id?{...q,[f]:v}:q));setDirty(true);};
-  const remove=id=>{setItems(p=>p.filter(q=>q.id!==id));setDirty(true);};
-  const addQ=()=>{if(!newQ.category||!newQ.question)return;setItems(p=>[...p,{...newQ,id:"custom_"+Date.now(),weight:Number(newQ.weight)}]);setNewQ({category:"",question:"",standard:"",weight:1,criticality:"Medium",remedType:"Internal",defaultAssessor:""});setAdding(false);setDirty(true);};
+  const update=(id,f,v)=>{setItems(p=>p.map(q=>q.id===id?{...q,[f]:v}:q));setDirty(true);onDirty();};
+  const remove=id=>{setItems(p=>p.filter(q=>q.id!==id));setDirty(true);onDirty();};
+  const addQ=()=>{if(!newQ.category||!newQ.question)return;setItems(p=>[...p,{...newQ,id:"custom_"+Date.now(),weight:Number(newQ.weight)}]);setNewQ({category:"",question:"",standard:"",weight:1,criticality:"Medium",remedType:"Internal",defaultAssessor:""});setAdding(false);setDirty(true);onDirty();};
   const filtered=items.filter(q=>filter==="All"||q.category===filter);
   const pad=isMobile?"16px":"0";
+  const [aiReview,setAiReview]=useState(null);
+  const [aiLoading,setAiLoading]=useState(false);
+
+  useEffect(()=>{setItems(catalog);},[catalog]);
+
+  useEffect(()=>{
+    const handleBeforeUnload=(e)=>{
+      if(dirty){e.preventDefault();e.returnValue='';}
+    };
+    window.addEventListener('beforeunload',handleBeforeUnload);
+    return()=>window.removeEventListener('beforeunload',handleBeforeUnload);
+  },[dirty]);
+
+  const runAiReview=async()=>{
+    setAiLoading(true);
+    setAiReview(null);
+    try{
+      const res=await apiPost("/api/ai-review",{catalog:items});
+      setAiReview(res.review);
+    }catch(err){
+      setAiReview("Error running review. Please try again.");
+    }
+    setAiLoading(false);
+  };
 
   return(
     <div style={{padding:`0 ${pad}`}}>
@@ -1421,6 +1470,7 @@ function ManageView({catalog,techs,isMobile,onSave}){
         <div><div style={{fontFamily:FONT,fontWeight:700,fontSize:20,color:T.ink}}>Question Library</div><div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginTop:2}}>{items.length} controls</div></div>
         <div style={{display:"flex",gap:8}}>
           <button onClick={()=>setAdding(true)} style={{background:T.navy,color:"white",border:"none",borderRadius:8,padding:"9px 14px",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:13}}>+ Add</button>
+          <button onClick={runAiReview} disabled={aiLoading} style={{background:T.purple,color:"white",border:"none",borderRadius:8,padding:"9px 14px",cursor:aiLoading?"default":"pointer",fontFamily:FONT,fontWeight:700,fontSize:13}}>{aiLoading?"Reviewing…":"✨ AI Review"}</button>
           {dirty&&<button onClick={()=>{onSave(items);setDirty(false);}} style={{background:T.ok,color:"white",border:"none",borderRadius:8,padding:"9px 14px",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:13}}>Save</button>}
         </div>
       </div>
@@ -1449,6 +1499,15 @@ function ManageView({catalog,techs,isMobile,onSave}){
           <button key={cat} onClick={()=>setFilter(cat)} style={{background:filter===cat?T.navy:T.card,color:filter===cat?"#fff":T.ink2,border:`1px solid ${filter===cat?T.navy:T.border}`,borderRadius:999,padding:"5px 13px",cursor:"pointer",fontFamily:FONT,fontSize:12,fontWeight:600,whiteSpace:"nowrap",flexShrink:0}}>{cat}</button>
         ))}
       </div>
+      {aiReview&&(
+        <div style={{background:T.purpleBg,border:`1px solid ${T.purpleBorder}`,borderRadius:12,padding:20,marginBottom:16}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <div style={{fontFamily:FONT,fontWeight:700,fontSize:15,color:T.purple}}>✨ AI Review</div>
+            <button onClick={()=>setAiReview(null)} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,color:T.muted}}>✕</button>
+          </div>
+          <div style={{fontFamily:FONT,fontSize:13,color:T.ink,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{aiReview}</div>
+        </div>
+      )}
       <div style={{display:"flex",flexDirection:"column",gap:7}}>
         {filtered.map(q=>(
           <div key={q.id} style={{background:T.card,borderRadius:9,padding:"12px 14px",border:`1px solid ${T.border}`,display:"flex",gap:10,alignItems:"flex-start"}}>
@@ -1504,6 +1563,30 @@ function ClientsView({clients,clientMeta,assessments,catalog,isMobile,onSave,onS
   };
   const remove=c=>{if(!window.confirm(`Remove "${c}" from clients? This cannot be undone.`))return;const newItems=items.filter(x=>x!==c);setItems(newItems);setDirty(true);onSave(newItems,clientMeta);};
   const pad=isMobile?"16px":"0";
+  const [aiReview,setAiReview]=useState(null);
+  const [aiLoading,setAiLoading]=useState(false);
+
+  useEffect(()=>{setItems(catalog);},[catalog]);
+
+  useEffect(()=>{
+    const handleBeforeUnload=(e)=>{
+      if(dirty){e.preventDefault();e.returnValue='';}
+    };
+    window.addEventListener('beforeunload',handleBeforeUnload);
+    return()=>window.removeEventListener('beforeunload',handleBeforeUnload);
+  },[dirty]);
+
+  const runAiReview=async()=>{
+    setAiLoading(true);
+    setAiReview(null);
+    try{
+      const res=await apiPost("/api/ai-review",{catalog:items});
+      setAiReview(res.review);
+    }catch(err){
+      setAiReview("Error running review. Please try again.");
+    }
+    setAiLoading(false);
+  };
 
   return(
     <div style={{padding:`0 ${pad}`}}>
