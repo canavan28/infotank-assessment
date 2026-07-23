@@ -954,18 +954,22 @@ function AssessView({ clients, catalog, assessments, techs, activeClient, setAct
             </div>
           </div>
           <div style={{ flex: 1, overflowY: "auto" }}>
-            {filteredQ.map(q => {
+            {filteredQ.map((q, idx) => {
               const r = responses[q.id] || {}; const isActive = activeQId === q.id;
               const sc = r.status === "Complete" ? T.ok : r.status === "Partial" ? T.warn : r.status === "Missing" ? T.err : r.status === "N/A" ? T.na : "transparent";
+              const showHeader = idx === 0 || filteredQ[idx - 1].category !== q.category;
               return (
-                <div key={q.id} onClick={() => setActiveQId(q.id)} style={{ display: "flex", gap: 8, padding: "10px 12px 10px 10px", cursor: "pointer", borderLeft: `4px solid ${isActive ? T.accent : sc}`, borderBottom: `1px solid ${T.border}`, background: isActive ? T.accentBg : T.card, boxShadow: isActive ? `inset 0 0 0 1px ${T.accent}20` : undefined }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", gap: 5, marginBottom: 3, alignItems: "center", flexWrap: "wrap" }}><CritBadge kind={q.criticality} /><TypeBadge t={q.remedType} /></div>
-                    <div style={{ fontFamily: FONT, fontSize: 12, color: T.ink, lineHeight: 1.35, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{q.question}</div>
-                    {r.assessor && <div style={{ fontFamily: MONO, fontSize: 10, color: T.muted, marginTop: 2 }}>{r.assessor}</div>}
+                <React.Fragment key={q.id}>
+                  {showHeader && <div style={{ padding: "6px 12px", background: T.navyAlt, borderBottom: `1px solid ${T.navyEdge}` }}><span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: T.accentGlow, letterSpacing: 1, textTransform: "uppercase" }}>{q.category}</span></div>}
+                  <div onClick={() => setActiveQId(q.id)} style={{ display: "flex", gap: 8, padding: "10px 12px 10px 10px", cursor: "pointer", borderLeft: `4px solid ${isActive ? T.accent : sc}`, borderBottom: `1px solid ${T.border}`, background: isActive ? T.accentBg : T.card, boxShadow: isActive ? `inset 0 0 0 1px ${T.accent}20` : undefined }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", gap: 5, marginBottom: 3, alignItems: "center", flexWrap: "wrap" }}><CritBadge kind={q.criticality} /><TypeBadge t={q.remedType} /></div>
+                      <div style={{ fontFamily: FONT, fontSize: 12, color: T.ink, lineHeight: 1.35, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{q.question}</div>
+                      {r.assessor && <div style={{ fontFamily: MONO, fontSize: 10, color: T.muted, marginTop: 2 }}>{r.assessor}</div>}
+                    </div>
+                    {r.status && <span style={{ fontFamily: MONO, fontSize: 10, color: sc, flexShrink: 0, paddingTop: 2, fontWeight: 700 }}>{r.status[0]}</span>}
                   </div>
-                  {r.status && <span style={{ fontFamily: MONO, fontSize: 10, color: sc, flexShrink: 0, paddingTop: 2, fontWeight: 700 }}>{r.status[0]}</span>}
-                </div>
+                </React.Fragment>
               );
             })}
           </div>
