@@ -124,7 +124,7 @@ const DEFAULT_CATALOG = [
   {id:"nw18",category:"Network",question:"Is there adequate LAN capacity to support network requirements?",standard:"Network gear supported/updated; configs backed up; changes documented.",weight:1,criticality:"Medium",remedType:"External"},
   {id:"nw19",category:"Network",question:"When was last password reset - All network equipment",standard:"Network gear supported/updated; configs backed up; changes documented.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"nw20",category:"Network",question:"When is next password reset - All network equipment",standard:"Network gear supported/updated; configs backed up; changes documented.",weight:1,criticality:"Medium",remedType:"Internal"},
-  {id:"pw1",category:"Passwords",question:"Archive old passwords",standard:"Password policy ΓëÑ12 chars; complexity on; lockout/throttle enabled; SSPR configured.",weight:2,criticality:"High",remedType:"Internal"},
+  {id:"pw1",category:"Passwords",question:"Archive old passwords",standard:"Password policy ≥12 chars; complexity on; lockout/throttle enabled; SSPR configured.",weight:2,criticality:"High",remedType:"Internal"},
   {id:"pw2",category:"Passwords",question:"Confirm that all admin passwords have been changed since we took over",standard:"No standard users have local admin; privileged roles minimized and reviewed monthly.",weight:2,criticality:"Critical",remedType:"Internal"},
   {id:"ph1",category:"Physical Checks",question:"Conduct an inventory of the workstations, make sure they are labeled and named properly",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"ph2",category:"Physical Checks",question:"Photos of the server/network room have been taken and uploaded to ITG",standard:"Documentation current (≤90 days) and complete for core services.",weight:1,criticality:"Medium",remedType:"Internal"},
@@ -149,7 +149,7 @@ const DEFAULT_CATALOG = [
   {id:"sc8",category:"Security",question:"Has company purchased SaaS Alerts",standard:"SaaS Alerts was purchased and on the contract",weight:2,criticality:"High",remedType:"External"},
   {id:"sc9",category:"Security",question:"Are logins protected by SaaS Alerts",standard:"SaaSAlerts deployed and reporting on 100% of endpoints with no critical alerts outstanding.",weight:2,criticality:"High",remedType:"Internal"},
   {id:"sv1",category:"Server",question:"Confirm Datto is configured on server to automatically deploy",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:2,criticality:"High",remedType:"Internal"},
-  {id:"sv2",category:"Server",question:"Are administrative account passwords set to be strong with a minimum of 12 mixed characters?",standard:"Password policy ΓëÑ12 chars; complexity on; lockout/throttle enabled; SSPR configured.",weight:2,criticality:"Critical",remedType:"Internal"},
+  {id:"sv2",category:"Server",question:"Are administrative account passwords set to be strong with a minimum of 12 mixed characters?",standard:"Password policy ≥12 chars; complexity on; lockout/throttle enabled; SSPR configured.",weight:2,criticality:"Critical",remedType:"Internal"},
   {id:"sv3",category:"Server",question:"Are all servers configured with static network information?",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"sv4",category:"Server",question:"Are all servers joined/bound to Active Directory domain?",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"sv5",category:"Server",question:"Are all servers under current vendor warranty?",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"External"},
@@ -160,7 +160,7 @@ const DEFAULT_CATALOG = [
   {id:"gp2",category:"Server - GPO",question:"Are there restrictive permissions in place to prevent unauthorized access?",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"gp3",category:"Server - GPO",question:"Do workstations/servers/network devices auto-logoff or auto-lock?",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"gp4",category:"Server - GPO",question:"Have all domain admin passwords been reset, and are they on a reset schedule?",standard:"No standard users have local admin; privileged roles minimized and reviewed monthly.",weight:2,criticality:"Critical",remedType:"Internal"},
-  {id:"gp5",category:"Server - GPO",question:"Is the password policy configured in Active Directory?",standard:"Password policy ΓëÑ12 chars; complexity on; lockout/throttle enabled; SSPR configured.",weight:2,criticality:"High",remedType:"Internal"},
+  {id:"gp5",category:"Server - GPO",question:"Is the password policy configured in Active Directory?",standard:"Password policy ≥12 chars; complexity on; lockout/throttle enabled; SSPR configured.",weight:2,criticality:"High",remedType:"Internal"},
   {id:"gp6",category:"Server - GPO",question:"Is there a password required immediately after sleep or when the screen saver begins?",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"gp7",category:"Server - GPO",question:"When is next password reset",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
   {id:"gp8",category:"Server - GPO",question:"When was last password reset",standard:"Meets InfoTank standard; exceptions documented with remediation plan.",weight:1,criticality:"Medium",remedType:"Internal"},
@@ -273,7 +273,7 @@ function ArchiveModal({item,onConfirm,onCancel}){
     <div style={{position:"fixed",inset:0,background:"rgba(11,23,41,0.75)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:600,padding:16}}>
       <div style={{background:T.card,borderRadius:14,padding:24,maxWidth:420,width:"100%",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
         <div style={{fontFamily:FONT,fontWeight:700,fontSize:18,color:T.ink,marginBottom:4}}>Archive Finding</div>
-        <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginBottom:6}}><strong>{item.client}</strong> ┬╖ {item.question}</div>
+        <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginBottom:6}}><strong>{item.client}</strong> · {item.question}</div>
         <div style={{fontFamily:FONT,fontSize:12,color:T.warn,marginBottom:16,padding:"8px 12px",background:T.warnBg,borderRadius:8}}>This item stays on the score but disappears from the work queue. A note is required.</div>
         <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="Why is this being archived? (e.g. Client declined — budget constraint)" rows={3}
           style={{width:"100%",fontFamily:FONT,fontSize:14,color:T.ink,border:`1.5px solid ${note.trim().length>5?T.ok:T.border}`,borderRadius:8,padding:"10px 12px",resize:"none",outline:"none",boxSizing:"border-box",marginBottom:16}}/>
@@ -345,12 +345,12 @@ export default function App(){
     if(authState!=="loggedIn")return;
     (async()=>{
       try{
-        const [meRes,catalogRes,clientsRes,clientMetaRes,techsRes,assessmentsRes,archivedRes]=await Promise.all([
+        const [meRes,catalogRes,clientsRes,clientMetaRes,usersRes,assessmentsRes,archivedRes]=await Promise.all([
           apiGet("/api/me"),
           apiGet("/api/kv/catalog"),
           apiGet("/api/kv/clients"),
           apiGet("/api/kv/clientMeta"),
-          apiGet("/api/kv/techs"),
+          apiGet("/api/users"),
           apiGet("/api/assessments"),
           apiGet("/api/archived"),
         ]);
@@ -358,7 +358,7 @@ export default function App(){
         if(catalogRes.value)setCatalog(catalogRes.value);
         if(clientsRes.value)setClients(clientsRes.value);
         if(clientMetaRes.value)setClientMeta(clientMetaRes.value);
-        if(techsRes.value)setTechs(techsRes.value);
+        setTechs((usersRes.users||[]).map(u=>u.name).filter(Boolean));
         setAssessments(assessmentsRes.assessments||{});
         setArchived(archivedRes.archived||{});
         setDataLoaded(true);
@@ -549,7 +549,7 @@ function HomeView({clients,clientMeta,assessments,catalog,archived,isMobile,onSt
               <div style={{height:5,background:T.bg,borderRadius:999,overflow:"hidden",marginBottom:5}}>
                 <div style={{height:"100%",width:`${s.pct}%`,background:s.pct>=80?T.ok:s.pct>=60?T.warn:T.err,borderRadius:999}}/>
               </div>
-              <div style={{fontFamily:MONO,fontSize:11,color:T.muted}}>{s.pct}% ┬╖ {fmtDate(s.date)}{s.inProg&&<span style={{color:T.purple,fontWeight:700}}> ┬╖ IN PROGRESS</span>}</div>
+              <div style={{fontFamily:MONO,fontSize:11,color:T.muted}}>{s.pct}% · {fmtDate(s.date)}{s.inProg&&<span style={{color:T.purple,fontWeight:700}}> · IN PROGRESS</span>}</div>
             </>
           ):<div style={{fontFamily:FONT,fontSize:12,color:T.muted}}>{s.inProg?"Assessment in progress — not yet submitted":"No assessment yet"}</div>}
         </div>
@@ -583,7 +583,7 @@ function HomeView({clients,clientMeta,assessments,catalog,archived,isMobile,onSt
 
       {activeFilter&&activeFilter!=="all"&&(
         <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginBottom:12}}>
-          Showing {filtered.length} client{filtered.length!==1?"s":""} ┬╖ <button onClick={()=>setActiveFilter(null)} style={{background:"none",border:"none",cursor:"pointer",color:T.accent,fontWeight:600,fontFamily:FONT,fontSize:13,padding:0}}>Clear filter</button>
+          Showing {filtered.length} client{filtered.length!==1?"s":""} · <button onClick={()=>setActiveFilter(null)} style={{background:"none",border:"none",cursor:"pointer",color:T.accent,fontWeight:600,fontFamily:FONT,fontSize:13,padding:0}}>Clear filter</button>
         </div>
       )}
 
@@ -800,7 +800,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
             {STATUSES.map(s=>{const isActive=activeR.status===s;const sc=statusColors[s][isActive?"active":"inactive"];return<button key={s} onClick={()=>setResp(activeQ.id,"status",isActive?null:s)} style={{padding:"16px 8px",borderRadius:12,border:`2px solid ${sc.border}`,background:sc.bg,color:sc.text,cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:14}}>{s}</button>;})}
           </div>
-          {activeR.answeredAt&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginBottom:10}}>ANSWERED ┬╖ {fmtTime(activeR.answeredAt)}</div>}
+          {activeR.answeredAt&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginBottom:10}}>ANSWERED · {fmtTime(activeR.answeredAt)}</div>}
           <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:"12px 14px",marginBottom:10}}>
             <Eyebrow>Notes</Eyebrow>
             <textarea value={activeR.notes||""} onChange={e=>setResp(activeQ.id,"notes",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="Add context…" rows={3} style={{width:"100%",fontFamily:FONT,fontSize:14,color:T.ink,border:"none",outline:"none",resize:"none",background:"transparent",boxSizing:"border-box",padding:"4px 0",marginTop:4}}/>
@@ -965,7 +965,7 @@ function AssessView({clients,catalog,assessments,techs,activeClient,setActiveCli
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:12}}>
                 {STATUSES.map(s=>{const isActive=activeR.status===s;const sc=statusColors[s][isActive?"active":"inactive"];return<button key={s} onClick={()=>setResp(activeQ.id,"status",isActive?null:s)} style={{padding:"12px 4px",borderRadius:9,border:`1.5px solid ${sc.border}`,background:sc.bg,color:sc.text,cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:13}}>{s}</button>;})}
               </div>
-              {activeR.answeredAt&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginBottom:12}}>ANSWERED ┬╖ {fmtTime(activeR.answeredAt)}</div>}
+              {activeR.answeredAt&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginBottom:12}}>ANSWERED · {fmtTime(activeR.answeredAt)}</div>}
               <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:"11px 13px",marginBottom:10}}>
                 <Eyebrow>Notes</Eyebrow>
                 <textarea value={activeR.notes||""} onChange={e=>setResp(activeQ.id,"notes",e.target.value,true)} onBlur={()=>autoSave(responses,null,false)} placeholder="Add context, findings, or observations…" rows={4} style={{width:"100%",fontFamily:FONT,fontSize:13,color:T.ink,lineHeight:1.5,border:"none",outline:"none",resize:"vertical",background:"transparent",boxSizing:"border-box",padding:"4px 0",marginTop:4}}/>
@@ -1041,7 +1041,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
           {clients.map(c=><option key={c}>{c}</option>)}
         </select>
         <button onClick={handleScreenshot} disabled={!last||capturing} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",background:last?T.navy:"#e2e8f0",color:last?"#E8EDF5":T.muted,border:"none",borderRadius:8,cursor:last?"pointer":"default",fontFamily:FONT,fontWeight:600,fontSize:12,whiteSpace:"nowrap",flexShrink:0}}>
-          {capturing?"Capturing…":"≡ƒôï Download for PowerPoint"}
+          {capturing?"Capturing…":"📋 Download for PowerPoint"}
         </button>
       </div>
       {!last?(
@@ -1051,10 +1051,10 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
           <div style={{background:T.navy,color:"#E8EDF5",padding:`14px ${px} 18px`,borderBottom:`1px solid ${T.navyEdge}`}}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
               <img src={LOGO_URI} alt="InfoTank" style={{height:26,width:"auto",objectFit:"contain"}}/>
-              <div style={{fontFamily:MONO,fontSize:10,color:"#94A3B8",letterSpacing:0.4}}>MANAGED SERVICES ┬╖ TBR SCORECARD</div>
+              <div style={{fontFamily:MONO,fontSize:10,color:"#94A3B8",letterSpacing:0.4}}>MANAGED SERVICES · TBR SCORECARD</div>
             </div>
             <div style={{fontFamily:FONT,fontSize:isMobile?20:26,fontWeight:700,letterSpacing:-0.5}}>{client}</div>
-            <div style={{fontFamily:FONT,fontSize:12,color:"#94A3B8",marginTop:3}}>Submitted {new Date(last.date).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} ┬╖ External findings only</div>
+            <div style={{fontFamily:FONT,fontSize:12,color:"#94A3B8",marginTop:3}}>Submitted {new Date(last.date).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} · External findings only</div>
           </div>
           <div style={{padding:`18px ${px} 28px`,background:T.bg}}>
             <div style={{display:isMobile?"flex":"grid",flexDirection:isMobile?"column":undefined,gridTemplateColumns:isMobile?undefined:"1.1fr 2fr",gap:14,marginBottom:14}}>
@@ -1076,7 +1076,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginTop:10}}>
                   {[{p:"P1",label:"Immediate",count:p1.length,c:T.err,bg:T.errBg,border:T.errBorder},{p:"P2",label:"Near-term",count:p2.length,c:T.warn,bg:T.warnBg,border:T.warnBorder},{p:"P3",label:"Planned",count:p3.length,c:T.accentInk,bg:T.accentBg,border:"#B6D7DD"}].map(t=>(
                     <div key={t.p} style={{background:t.bg,borderRadius:9,padding:"11px 13px",border:`1px solid ${t.border}`}}>
-                      <div style={{fontFamily:MONO,fontSize:10,fontWeight:700,color:t.c,marginBottom:5}}>{t.p} ┬╖ {t.label}</div>
+                      <div style={{fontFamily:MONO,fontSize:10,fontWeight:700,color:t.c,marginBottom:5}}>{t.p} · {t.label}</div>
                       <div style={{fontFamily:MONO,fontSize:30,fontWeight:600,color:t.c,letterSpacing:-1,lineHeight:1}}>{t.count}</div>
                     </div>
                   ))}
@@ -1126,7 +1126,7 @@ function DashboardView({clients,assessments,catalog,activeClient,setActiveClient
                   </table>
                 )}
                 <div style={{display:"flex",justifyContent:"space-between",padding:"9px 18px",borderTop:`1px solid ${T.border}`,fontFamily:MONO,fontSize:10,color:T.muted}}>
-                  <span>INFOTANK ┬╖ TECHNOLOGY BUSINESS REVIEW ┬╖ CONFIDENTIAL</span>
+                  <span>INFOTANK · TECHNOLOGY BUSINESS REVIEW · CONFIDENTIAL</span>
                   <span>{new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"}).toUpperCase()}</span>
                 </div>
               </div>
@@ -1202,7 +1202,7 @@ function RemediationView({clients,assessments,catalog,techs,archived,isMobile,on
         <div>
           <div style={{fontFamily:FONT,fontWeight:700,fontSize:20,color:T.ink}}>Remediation</div>
           <div style={{fontFamily:FONT,fontSize:13,color:T.muted,marginTop:2}}>
-            <span style={{color:activeItems.length>0?T.err:T.ok,fontWeight:700}}>{activeItems.length}</span> active ┬╖ {archivedItems.length} archived ┬╖ Drive to zero
+            <span style={{color:activeItems.length>0?T.err:T.ok,fontWeight:700}}>{activeItems.length}</span> active · {archivedItems.length} archived · Drive to zero
           </div>
         </div>
         <button onClick={()=>setShowArchived(s=>!s)} style={{padding:"7px 14px",background:showArchived?T.warnBg:"white",border:`1px solid ${showArchived?T.warnBorder:T.border}`,borderRadius:8,cursor:"pointer",fontFamily:FONT,fontSize:13,fontWeight:600,color:showArchived?T.warn:T.muted}}>
@@ -1245,12 +1245,12 @@ function RemediationView({clients,assessments,catalog,techs,archived,isMobile,on
               </div>
             </div>
           ))}
-          {filtered.length===0&&<div style={{textAlign:"center",padding:48,color:T.muted,fontFamily:FONT,fontSize:15}}>≡ƒÄë {showArchived?"No archived items":"No active findings — great work!"}</div>}
+          {filtered.length===0&&<div style={{textAlign:"center",padding:48,color:T.muted,fontFamily:FONT,fontSize:15}}>🎉 {showArchived?"No archived items":"No active findings — great work!"}</div>}
         </div>
       ):(
         <div style={{background:T.card,borderRadius:12,border:`1px solid ${T.border}`,overflow:"hidden"}}>
           {filtered.length===0?(
-            <div style={{textAlign:"center",padding:60,color:T.muted,fontFamily:FONT,fontSize:15}}>≡ƒÄë {showArchived?"No archived items":"No active findings — great work!"}</div>
+            <div style={{textAlign:"center",padding:60,color:T.muted,fontFamily:FONT,fontSize:15}}>🎉 {showArchived?"No archived items":"No active findings — great work!"}</div>
           ):(
             <table style={{width:"100%",borderCollapse:"collapse",fontFamily:FONT,fontSize:13}}>
               <thead>
@@ -1329,7 +1329,7 @@ function AssessorsView({assessments,catalog,techs,clients,isMobile,onSaveTechs})
             <div style={{fontFamily:FONT,fontWeight:600,fontSize:15,color:T.ink,marginBottom:4}}>{s.tech}</div>
             <div style={{fontFamily:MONO,fontSize:34,fontWeight:600,color:s.total>0?T.accent:T.muted,letterSpacing:-1,lineHeight:1}}>{s.total}</div>
             <div style={{fontFamily:FONT,fontSize:12,color:T.muted,marginTop:2}}>questions answered</div>
-            {s.lastActive&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginTop:6,letterSpacing:0.3}}>LAST ┬╖ {fmtTime(s.lastActive)}</div>}
+            {s.lastActive&&<div style={{fontFamily:MONO,fontSize:10,color:T.muted,marginTop:6,letterSpacing:0.3}}>LAST · {fmtTime(s.lastActive)}</div>}
           </div>
         ))}
       </div>
@@ -1448,14 +1448,14 @@ function ManageView({catalog,techs,isMobile,onSave}){
                 <div style={{display:"flex",gap:5,marginBottom:4,alignItems:"center",flexWrap:"wrap"}}>
                   <CritBadge kind={q.criticality}/>
                   <TypeBadge t={q.remedType}/>
-                  <span style={{fontFamily:MONO,fontSize:10,color:T.muted}}>Wt {q.weight} ┬╖ {q.category}</span>
+                  <span style={{fontFamily:MONO,fontSize:10,color:T.muted}}>Wt {q.weight} · {q.category}</span>
                 </div>
                 <div style={{fontFamily:FONT,fontWeight:600,fontSize:13,color:T.ink}}>{q.question}</div>
               </div>
             )}
             <div style={{display:"flex",gap:5,flexShrink:0}}>
-              <button onClick={()=>setEditId(editId===q.id?null:q.id)} style={{background:T.bg,color:T.muted,border:`1px solid ${T.border}`,borderRadius:6,padding:"5px 9px",cursor:"pointer",fontSize:12}}>Γ£Å∩╕Å</button>
-              <button onClick={()=>remove(q.id)} style={{background:T.errBg,color:T.err,border:`1px solid ${T.errBorder}`,borderRadius:6,padding:"5px 9px",cursor:"pointer",fontSize:12}}>Γ£ò</button>
+              <button onClick={()=>setEditId(editId===q.id?null:q.id)} style={{background:T.bg,color:T.muted,border:`1px solid ${T.border}`,borderRadius:6,padding:"5px 9px",cursor:"pointer",fontSize:12}}>✏️</button>
+              <button onClick={()=>remove(q.id)} style={{background:T.errBg,color:T.err,border:`1px solid ${T.errBorder}`,borderRadius:6,padding:"5px 9px",cursor:"pointer",fontSize:12}}>✕</button>
             </div>
           </div>
         ))}
@@ -1503,8 +1503,8 @@ function ClientsView({clients,clientMeta,assessments,catalog,isMobile,onSave,onS
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontFamily:FONT,fontWeight:600,fontSize:14,color:T.ink}}>{s.client}</div>
                 <div style={{fontFamily:MONO,fontSize:10,color:s.status==="overdue"?T.err:s.status==="due"?T.warn:T.muted,marginTop:2,fontWeight:s.status!=="ok"?700:400}}>
-                  {s.pct!=null?`${s.pct}% ┬╖ ${fmtDate(s.date)}`:clientMeta[s.client]?.createdAt?`Added ${fmtDate(clientMeta[s.client].createdAt)}`:"No assessment yet"}
-                  {s.status!=="ok"&&<span style={{marginLeft:6}}>{s.status==="overdue"?"┬╖ OVERDUE":"┬╖ DUE SOON"}</span>}
+                  {s.pct!=null?`${s.pct}% · ${fmtDate(s.date)}`:clientMeta[s.client]?.createdAt?`Added ${fmtDate(clientMeta[s.client].createdAt)}`:"No assessment yet"}
+                  {s.status!=="ok"&&<span style={{marginLeft:6}}>{s.status==="overdue"?"· OVERDUE":"· DUE SOON"}</span>}
                 </div>
               </div>
               <button onClick={()=>remove(s.client)} style={{background:T.errBg,color:T.err,border:`1px solid ${T.errBorder}`,borderRadius:6,padding:"4px 9px",cursor:"pointer",fontSize:12,fontFamily:FONT,fontWeight:600,flexShrink:0}}>Remove</button>
