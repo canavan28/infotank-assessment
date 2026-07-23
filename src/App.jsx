@@ -463,7 +463,7 @@ export default function App() {
               <div style={{ display: "flex", gap: 2 }}>
                 {navItems.map(n => {
                   const active = view === n.id; return (
-                    <button key={n.id} onClick={() => safesetView(n.id)} style={{ padding: "8px 13px", borderRadius: 6, background: active ? "rgba(79,179,199,0.14)" : "transparent", color: active ? "#fff" : "#94A3B8", border: "none", cursor: "pointer", fontFamily: FONT, fontSize: 13, fontWeight: active ? 600 : 500, position: "relative" }}>
+                    <button key={n.id} onClick={() => safeSetView(n.id)} style={{ padding: "8px 13px", borderRadius: 6, background: active ? "rgba(79,179,199,0.14)" : "transparent", color: active ? "#fff" : "#94A3B8", border: "none", cursor: "pointer", fontFamily: FONT, fontSize: 13, fontWeight: active ? 600 : 500, position: "relative" }}>
                       {n.label}{active && <div style={{ position: "absolute", left: 13, right: 13, bottom: -1, height: 2, background: T.accentGlow }} />}
                     </button>
                   );
@@ -505,7 +505,7 @@ export default function App() {
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: T.navy, borderTop: `1px solid ${T.navyEdge}`, display: "flex", zIndex: 200, paddingBottom: "env(safe-area-inset-bottom,0px)" }}>
           {mobileNavItems.map(n => {
             const active = view === n.id; return (
-              <button key={n.id} onClick={() => safesetView(n.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 2px 8px", background: "transparent", border: "none", cursor: "pointer", color: active ? T.accentGlow : "#64748B", position: "relative" }}>
+              <button key={n.id} onClick={() => safeSetView(n.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 2px 8px", background: "transparent", border: "none", cursor: "pointer", color: active ? T.accentGlow : "#64748B", position: "relative" }}>
                 <span style={{ fontSize: 18 }}>{n.icon}</span>
                 <span style={{ fontFamily: FONT, fontSize: 9, fontWeight: active ? 700 : 500 }}>{n.label}</span>
                 {active && <div style={{ position: "absolute", top: 0, left: "10%", right: "10%", height: 2, background: T.accentGlow, borderRadius: 1 }} />}
